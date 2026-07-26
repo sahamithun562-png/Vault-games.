@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 GameVault — By Mrin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{
+            --primary:#7C5CFC;--primary-light:#A78BFA;--secondary:#E8567F;
+            --accent:#3ECFB2;--neon-green:#4ADE80;--warm-yellow:#FBBF24;
+            --warm-orange:#FB923C;--bg-dark:#0C0C1D;--bg-darker:#08081A;
+            --bg-card:#151530;--text-primary:#F1F1F8;--text-secondary:#B0B0CC;
+            --text-muted:#6B6B8D;--border-color:#2A2A50;--success:#10B981;
+            --danger:#EF4444;--warning:#F59E0B;
+            --gradient-main:linear-gradient(135deg,#7C5CFC 0%,#E8567F 100%);
+            --gradient-gold:linear-gradient(135deg,#FBBF24 0%,#FB923C 100%);
+            --shadow-glow:0 0 40px rgba(124,92,252,0.15);
+            --font-heading:'Quicksand',sans-serif;--font-body:'Nunito',sans-serif;
+            --font-hand:'Kalam',cursive;--font-accent:'Caveat',cursive;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{font-family:var(--font-body);background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.7;font-size:17px}
+
+        .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;
+            background:radial-gradient(ellipse at 20% 50%,rgba(124,92,252,0.08) 0%,transparent 50%),
+            radial-gradient(ellipse at 80% 20%,rgba(232,86,127,0.06) 0%,transparent 50%),
+            radial-gradient(ellipse at 50% 80%,rgba(62,207,178,0.05) 0%,transparent 50%),var(--bg-dark)}
+        .bg-animation .particle{position:absolute;border-radius:50%;animation:floatP linear infinite;opacity:.1;filter:blur(1px)}
+        .bg-animation .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle ease-in-out infinite}
+        @keyframes floatP{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.1;transform:translateY(90vh) scale(1)}90%{opacity:.1}100%{transform:translateY(-10vh) rotate(720deg) scale(0);opacity:0}}
+        @keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.5)}}
+        .ambient-orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.06;animation:orbF 20s ease-in-out infinite;pointer-events:none;z-index:-1}
+        .ambient-orb:nth-child(1){width:400px;height:400px;background:var(--primary);top:10%;left:-5%;animation-duration:25s}
+        .ambient-orb:nth-child(2){width:350px;height:350px;background:var(--secondary);top:60%;right:-5%;animation-duration:30s;animation-delay:-5s}
+        .ambient-orb:nth-child(3){width:300px;height:300px;background:var(--accent);bottom:10%;left:30%;animation-duration:22s;animation-delay:-10s}
+        @keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-darker)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:10px}
+
+        .ban-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-darker);z-index:99999;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px}
+        .ban-screen .ban-icon{font-size:5rem;margin-bottom:30px;animation:shake .5s ease-in-out infinite alternate}
+        .ban-screen h1{font-family:var(--font-heading);font-size:2.5rem;color:var(--danger);margin-bottom:15px}
+        .ban-screen p{color:var(--text-muted);font-size:1.1rem;font-family:var(--font-hand);max-width:500px}
+        @keyframes shake{0%{transform:rotate(-3deg)}100%{transform:rotate(3deg)}}
+              .navbar{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:14px 30px;display:flex;justify-content:space-between;align-items:center;background:rgba(12,12,29,0.85);backdrop-filter:blur(25px);border-bottom:1px solid rgba(124,92,252,0.1);transition:all .4s ease}
+        .navbar.scrolled{padding:10px 30px;background:rgba(12,12,29,0.95);box-shadow:0 5px 30px rgba(0,0,0,0.3)}
+        .nav-logo{font-family:var(--font-accent);font-size:2.2rem;font-weight:700;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;text-decoration:none}
+        .nav-center{display:flex;align-items:center;gap:24px}
+        .nav-links{display:flex;list-style:none;gap:22px;align-items:center}
+        .nav-links a{text-decoration:none;color:var(--text-secondary);font-weight:700;font-size:.95rem;font-family:var(--font-heading);transition:all .3s ease;padding:5px 0;position:relative}
+        .nav-links a:hover{color:var(--primary-light)}
+        .nav-links a::after{content:'';position:absolute;bottom:-2px;left:50%;width:0;height:2px;background:var(--gradient-main);transition:all .3s ease;transform:translateX(-50%)}
+        .nav-links a:hover::after{width:100%}
+        .nav-links a.active{color:var(--primary-light)}
+        .nav-links a.active::after{width:100%}
+
+        .search-container{position:relative}
+        .search-bar{display:flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(255,255,255,0.04);border:1px solid var(--border-color);border-radius:50px;transition:all .3s ease;width:200px}
+        .search-bar:focus-within{border-color:var(--primary);width:280px}
+        .search-bar i{color:var(--text-muted);font-size:.9rem}
+        .search-bar input{background:transparent;border:none;color:var(--text-primary);font-family:var(--font-body);font-size:.9rem;outline:none;width:100%}
+        .search-bar input::placeholder{color:var(--text-muted)}
+        .search-results{position:absolute;top:100%;left:0;right:0;margin-top:8px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;display:none;box-shadow:0 15px 40px rgba(0,0,0,0.4);z-index:100}
+        .search-results.active{display:block}
+        .search-result-item{padding:12px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .2s ease;text-decoration:none;color:var(--text-primary);font-family:var(--font-heading);font-size:.9rem}
+        .search-result-item:hover{background:rgba(124,92,252,0.08)}
+        .search-result-item i{color:var(--primary-light);width:20px;text-align:center}
+
+        .coin-bar-nav{display:flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:50px;cursor:pointer;transition:all .3s ease;text-decoration:none}
+        .coin-bar-nav:hover{background:rgba(251,191,36,0.18)}
+        .coin-bar-nav .coin-icon{font-size:1rem}
+        .coin-bar-nav .coin-amount{font-family:var(--font-heading);font-weight:800;color:var(--warm-yellow);font-size:.95rem}
+        .coin-bar-nav .coin-level{font-size:.7rem;color:var(--warm-orange);font-family:var(--font-hand)}
+
+        .hamburger{display:none;flex-direction:column;cursor:pointer;gap:5px;padding:5px}
+        .hamburger span{width:26px;height:3px;background:var(--text-primary);border-radius:5px}
+        .mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100vh;background:rgba(8,8,26,0.98);backdrop-filter:blur(20px);z-index:999;flex-direction:column;justify-content:center;align-items:center;gap:25px}
+        .mobile-menu.active{display:flex}
+        .mobile-menu a{font-size:1.3rem;text-decoration:none;color:var(--text-primary);font-weight:700;font-family:var(--font-heading)}
+        .mobile-menu .close-btn{position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:var(--text-primary);background:none;border:none}
+
+        .btn{padding:14px 32px;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:9px;border:none;font-family:var(--font-heading)}
+        .btn-primary{background:var(--gradient-main);color:white;box-shadow:0 4px 20px rgba(124,92,252,0.35)}
+        .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(124,92,252,0.5)}
+        .btn-gold{background:var(--gradient-gold);color:#1a1a1a;box-shadow:0 4px 20px rgba(251,191,36,0.3)}
+        .btn-gold:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(251,191,36,0.5)}
+        .btn-secondary{background:rgba(255,255,255,0.05);color:var(--text-primary);border:1.5px solid var(--border-color)}
+        .btn-secondary:hover{border-color:var(--primary);transform:translateY(-3px)}
+        .btn-danger{background:var(--danger);color:white}
+        .btn-success{background:var(--success);color:white}
+        .btn-small{padding:8px 18px;font-size:.85rem;border-radius:10px}
+        .btn-play{padding:18px 50px;font-size:1.2rem;border-radius:18px;box-shadow:0 6px 30px rgba(124,92,252,0.4)}
+        .btn-play:hover{transform:translateY(-4px) scale(1.05)}
+
+        .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:130px 20px 80px;position:relative}
+        .hero-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 24px;background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.25);border-radius:50px;font-size:1rem;font-family:var(--font-hand);color:var(--primary-light);margin-bottom:28px;animation:fadeInDown 1s ease}
+        .hero-badge .dot{width:8px;height:8px;background:var(--neon-green);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+        .hero h1{font-family:var(--font-heading);font-size:3.5rem;font-weight:800;line-height:1.15;margin-bottom:22px;animation:fadeInUp 1s ease .2s both}
+        .hero h1 .gradient-text{background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hero h1 .hand-text{font-family:var(--font-accent);font-weight:700;color:var(--warm-yellow);-webkit-text-fill-color:var(--warm-yellow);font-size:3.8rem}
+        .hero .subtitle{font-size:1.15rem;font-family:var(--font-hand);color:var(--text-secondary);max-width:600px;margin-bottom:40px;line-height:1.8;animation:fadeInUp 1s ease .4s both}
+        .hero .subtitle .hl{color:var(--accent);font-weight:700}
+        .hero .subtitle .hl2{color:var(--secondary);font-weight:700}
+        .hero-buttons{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;animation:fadeInUp 1s ease .6s both}
+        .floating-el{position:absolute;font-size:2rem;opacity:.12;animation:float 6s ease-in-out infinite;pointer-events:none}
+        .floating-el:nth-child(1){top:18%;left:8%}.floating-el:nth-child(2){top:25%;right:10%;animation-delay:2s}
+        .floating-el:nth-child(3){bottom:22%;left:12%;animation-delay:4s}.floating-el:nth-child(4){bottom:28%;right:12%;animation-delay:1s}
+        @keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-25px) rotate(10deg)}}
+              .section{padding:85px 28px;max-width:1200px;margin:0 auto}
+        .section-header{text-align:center;margin-bottom:45px}
+        .section-header .tag{display:inline-block;padding:7px 20px;background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.2);border-radius:50px;font-size:.85rem;font-family:var(--font-hand);color:var(--primary-light);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+        .section-header h2{font-family:var(--font-heading);font-size:2.4rem;font-weight:800;margin-bottom:10px}
+        .section-header p{color:var(--text-secondary);font-size:1.05rem;max-width:550px;margin:0 auto;font-family:var(--font-hand)}
+        .section-divider{width:60px;height:4px;background:var(--gradient-main);border-radius:4px;margin:0 auto 16px}
+
+        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+        .feature-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:22px;padding:32px;transition:all .4s ease;position:relative;overflow:hidden}
+        .feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gradient-main);opacity:0;transition:opacity .3s ease}
+        .feature-card:hover{transform:translateY(-5px);border-color:rgba(124,92,252,0.3);box-shadow:var(--shadow-glow)}
+        .feature-card:hover::before{opacity:1}
+        .feature-icon{width:55px;height:55px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px}
+        .feature-icon.purple{background:rgba(124,92,252,0.12);color:var(--primary)}
+        .feature-icon.pink{background:rgba(232,86,127,0.12);color:var(--secondary)}
+        .feature-icon.cyan{background:rgba(62,207,178,0.12);color:var(--accent)}
+        .feature-icon.green{background:rgba(74,222,128,0.12);color:var(--neon-green)}
+        .feature-icon.gold{background:rgba(251,191,36,0.12);color:var(--warm-yellow)}
+        .feature-icon.orange{background:rgba(251,146,60,0.12);color:var(--warm-orange)}
+        .feature-card h3{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin-bottom:8px}
+        .feature-card p{color:var(--text-secondary);font-size:.92rem;line-height:1.6;font-family:var(--font-hand)}
+
+        .quick-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:30px}
+        .quick-link{background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;padding:25px;text-align:center;cursor:pointer;transition:all .4s ease;text-decoration:none;color:var(--text-primary)}
+        .quick-link:hover{transform:translateY(-5px);border-color:var(--primary);box-shadow:var(--shadow-glow)}
+        .quick-link .ql-icon{font-size:2.5rem;margin-bottom:12px}
+        .quick-link h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:5px}
+        .quick-link p{font-family:var(--font-hand);color:var(--text-muted);font-size:.85rem}
+
+        .music-control{position:fixed;bottom:20px;left:20px;z-index:900;display:flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(12,12,29,0.9);border:1px solid var(--border-color);border-radius:50px;backdrop-filter:blur(10px);cursor:pointer;transition:all .3s ease}
+        .music-control:hover{border-color:var(--primary)}
+        .music-control i{color:var(--primary-light);font-size:1rem}
+        .music-control span{font-family:var(--font-hand);color:var(--text-muted);font-size:.82rem}
+
+        .footer{background:var(--bg-card);border-top:1px solid var(--border-color);padding:35px 28px 22px;text-align:center}
+        .footer p{color:var(--text-muted);font-family:var(--font-hand);font-size:.95rem}
+        .footer a{color:var(--primary-light);text-decoration:none}
+
+        .toast-container{position:fixed;top:76px;right:18px;z-index:8000;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:13px 22px;border-radius:12px;font-size:.9rem;font-family:var(--font-hand);display:flex;align-items:center;gap:8px;animation:slideIn .4s ease,fadeOut .4s ease 2.6s both;min-width:250px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+        .toast.success{background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.3);color:var(--success)}
+        .toast.error{background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.3);color:var(--danger)}
+        .toast.info{background:rgba(124,92,252,0.2);border:1px solid rgba(124,92,252,0.3);color:var(--primary-light)}
+        .toast.gold{background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.3);color:var(--warm-yellow)}
+
+        @keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes fadeOut{to{opacity:0;transform:translateX(120%)}}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+
+        .daily-popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:6000;justify-content:center;align-items:center;backdrop-filter:blur(10px)}
+        .daily-popup.active{display:flex}
+        .daily-box{background:var(--bg-card);border:2px solid var(--warm-yellow);border-radius:28px;padding:40px;max-width:420px;width:92%;text-align:center;box-shadow:0 0 60px rgba(251,191,36,0.2);animation:fadeInUp .5s ease}
+        .daily-box .daily-icon{font-size:4rem;margin-bottom:15px;animation:bounce 1s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        .daily-box h2{font-family:var(--font-heading);font-size:1.5rem;font-weight:800;margin-bottom:8px}
+        .daily-box p{font-family:var(--font-hand);color:var(--text-secondary);margin-bottom:18px}
+        .daily-box .daily-coins{font-family:var(--font-heading);font-size:2rem;font-weight:900;color:var(--warm-yellow);margin-bottom:18px}
+        .daily-task{background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:14px;padding:14px;margin-bottom:18px;text-align:left}
+        .daily-task h4{font-family:var(--font-heading);font-weight:700;font-size:.95rem;color:var(--accent);margin-bottom:4px}
+        .daily-task p{font-size:.88rem;margin-bottom:0}
+
+        @media(max-width:768px){
+            .navbar{padding:12px 14px}.nav-center{display:none}.hamburger{display:flex}
+            .hero h1{font-size:2rem}.hero h1 .hand-text{font-size:2.2rem}
+            .hero .subtitle{font-size:.95rem}
+            .section{padding:55px 14px}.section-header h2{font-size:1.8rem}
+            .features-grid{grid-template-columns:1fr}
+            .hero-buttons{flex-direction:column;align-items:center}
+            .search-bar{width:160px}.search-bar:focus-within{width:200px}
+            .btn-play{padding:14px 38px;font-size:1.05rem}
+        }
+        @media(max-width:480px){.hero h1{font-size:1.6rem}.hero h1 .hand-text{font-size:1.8rem}}
+    </style>
+</head>
+<body>
+    <div class="ban-screen" id="banScreen" style="display:none">
+        <div class="ban-icon">🚫</div><h1>Access Denied</h1>
+        <p>You have been banned from GameVault.</p>
+    </div>
+    <div class="ambient-orb"></div><div class="ambient-orb"></div><div class="ambient-orb"></div>
+    <div class="bg-animation" id="bgAnimation"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- DAILY -->
+    <div class="daily-popup" id="dailyPopup">
+        <div class="daily-box">
+            <div class="daily-icon">🎁</div><h2>daily reward!</h2>
+            <p>welcome back! here's your bonus ~</p>
+            <div class="daily-coins">+5 🪙</div>
+            <div class="daily-task"><h4>📋 today's challenge</h4><p id="dailyTaskText">loading...</p></div>
+            <button class="btn btn-gold" onclick="claimDaily()" style="width:100%"><i class="fas fa-gift"></i> claim</button>
+        </div>
+    </div>
+
+    <!-- MUSIC CONTROL -->
+    <div class="music-control" id="musicControl" onclick="toggleMusic()">
+        <i class="fas fa-music" id="musicIcon"></i>
+        <span id="musicLabel">♪ music on</span>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">GameVault 🎮</a>
+        <div class="nav-center">
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="arcade.html">Arcade</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="admin.html">🔐 Admin</a></li>
+            </ul>
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="search pages..." oninput="handleSearch()" onfocus="handleSearch()" onblur="setTimeout(function(){document.getElementById('searchResults').classList.remove('active')},200)">
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+        <a href="shop.html" class="coin-bar-nav">
+            <span class="coin-icon">🪙</span>
+            <span class="coin-amount" id="navCoins">0</span>
+            <span class="coin-level" id="navLevel">Lv.1</span>
+        </a>
+        <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-btn" onclick="toggleMobile()">✕</button>
+        <a href="index.html" onclick="toggleMobile()">🏠 Home</a>
+        <a href="arcade.html" onclick="toggleMobile()">🎮 Arcade</a>
+        <a href="shop.html" onclick="toggleMobile()">🛒 Shop</a>
+        <a href="admin.html" onclick="toggleMobile()">🔐 Admin</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="floating-el">🎮</div><div class="floating-el">🎲</div>
+        <div class="floating-el">🐍</div><div class="floating-el">🏆</div>
+        <div class="hero-badge"><span class="dot"></span> play games, earn coins, flex skins ~</div>
+        <h1>play. win. <span class="gradient-text">earn coins.</span><br><span class="hand-text">level up!</span> 🎮</h1>
+        <p class="subtitle">play <span class="hl">Ludo</span> & <span class="hl">Snake</span> right here. earn 🪙 coins, buy <span class="hl2">custom skins</span>, and climb the ranks ~</p>
+        <div class="hero-buttons">
+            <a href="arcade.html" class="btn btn-primary btn-play"><i class="fas fa-gamepad"></i> PLAY NOW</a>
+            <a href="shop.html" class="btn btn-gold btn-play"><i class="fas fa-store"></i> COIN SHOP</a>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+        <div class="section-header"><span class="tag">⚡ features</span><div class="section-divider"></div><h2>why gamevault?</h2><p>everything you need in one place ~</p></div>
+        <div class="features-grid">
+            <div class="feature-card"><div class="feature-icon purple"><i class="fas fa-gamepad"></i></div><h3>play games</h3><p>snake & ludo with full mechanics, skins, and effects ~</p></div>
+            <div class="feature-card"><div class="feature-icon gold"><i class="fas fa-coins"></i></div><h3>earn coins</h3><p>win games, claim daily rewards, level up for bonuses ~</p></div>
+            <div class="feature-card"><div class="feature-icon pink"><i class="fas fa-tshirt"></i></div><h3>custom skins</h3><p>buy snake skins, dice skins, board skins from the shop ~</p></div>
+            <div class="feature-card"><div class="feature-icon cyan"><i class="fas fa-music"></i></div><h3>ambient music</h3><p>aesthetic background music that plays while you browse ~</p></div>
+            <div class="feature-card"><div class="feature-icon green"><i class="fas fa-shield-alt"></i></div><h3>admin panel</h3><p>full control room — create skins, manage viewers, themes ~</p></div>
+            <div class="feature-card"><div class="feature-icon orange"><i class="fas fa-gift"></i></div><h3>daily rewards</h3><p>login every day for free coins and random challenges ~</p></div>
+        </div>
+    </section>
+
+    <!-- QUICK LINKS -->
+    <section class="section">
+        <div class="section-header"><span class="tag">🚀 quick access</span><div class="section-divider"></div><h2>jump to</h2><p>go anywhere instantly ~</p></div>
+        <div class="quick-links">
+            <a href="arcade.html" class="quick-link"><div class="ql-icon">🎮</div><h4>arcade</h4><p>play snake & ludo</p></a>
+            <a href="shop.html" class="quick-link"><div class="ql-icon">🛒</div><h4>coin shop</h4><p>buy skins & items</p></a>
+            <a href="shop.html#redeem" class="quick-link"><div class="ql-icon">🎟️</div><h4>redeem code</h4><p>enter secret codes</p></a>
+            <a href="admin.html" class="quick-link"><div class="ql-icon">🔐</div><h4>admin panel</h4><p>control room</p></a>
+        </div>
+    </section>
+
+    <!-- SECURITY INFO -->
+    <section class="section" id="security">
+        <div class="section-header"><span class="tag">🛡️ security</span><div class="section-divider"></div><h2>admin security center</h2><p>authorized personnel only ~</p></div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:22px;padding:35px;text-align:center;max-width:500px;margin:0 auto">
+            <div style="font-size:3rem;margin-bottom:12px">🛡️</div>
+            <h3 style="font-family:var(--font-heading);font-weight:800;margin-bottom:8px">admin access portal</h3>
+            <p style="font-family:var(--font-hand);color:var(--text-muted);margin-bottom:18px">this panel controls everything — skins, themes, viewers, sounds, and live code updates.</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:18px">
+                <span style="padding:4px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:50px;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted)"><i class="fas fa-paint-brush"></i> themes</span>
+                <span style="padding:4px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:50px;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted)"><i class="fas fa-users"></i> viewers</span>
+                <span style="padding:4px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:50px;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted)"><i class="fas fa-tshirt"></i> skins</span>
+                <span style="padding:4px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:50px;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted)"><i class="fas fa-code"></i> live code</span>
+                <span style="padding:4px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:50px;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted)"><i class="fas fa-music"></i> sounds</span>
+            </div>
+            <a href="admin.html" class="btn btn-primary"><i class="fas fa-lock"></i> go to admin panel</a>
+        </div>
+    </section>
+
+    <footer class="footer"><p>© 2024 GameVault by <a href="#">Mrin</a>. play. earn. be legendary 💜</p></footer>
+        <script>
+        // ===== SHARED CORE (used across all pages) =====
+        var coins=parseInt(localStorage.getItem('gv_coins'))||0;
+        var viewers=JSON.parse(localStorage.getItem('gv_viewers'))||[];
+        var bannedIPs=JSON.parse(localStorage.getItem('gv_banned'))||[];
+        var savedTheme=JSON.parse(localStorage.getItem('gv_theme'))||null;
+        var lastDaily=localStorage.getItem('gv_last_daily')||'';
+        var LEVELS=[{name:'newbie',min:0,max:100,reward:0},{name:'casual',min:100,max:300,reward:50},{name:'rising star',min:300,max:600,reward:75},{name:'pro',min:600,max:1000,reward:100},{name:'elite',min:1000,max:2000,reward:150},{name:'legendary',min:2000,max:5000,reward:250},{name:'god tier',min:5000,max:99999,reward:500}];
+        var DAILY_TASKS=['play 3 snake rounds 🐍','score 15+ in snake','play 2 ludo rounds 🎲','visit coin shop 🛒','eat 20 foods in snake','capture 2 pieces in ludo','new snake high score','win a ludo game 🏆','redeem a code 🎟️','play both games 🎮'];
+
+        function getVisitorID(){var id=localStorage.getItem('gv_vid');if(!id){id='v_'+Date.now()+'_'+Math.random().toString(36).substr(2,8);localStorage.setItem('gv_vid',id)}return id}
+        function getLevel(){for(var i=LEVELS.length-1;i>=0;i--)if(coins>=LEVELS[i].min)return{level:i+1,data:LEVELS[i]};return{level:1,data:LEVELS[0]}}
+        function updateNavCoins(){var l=getLevel();var nc=document.getElementById('navCoins');if(nc)nc.textContent=coins;var nl=document.getElementById('navLevel');if(nl)nl.textContent='Lv.'+l.level}
+        function showToast(msg,type){type=type||'success';var c=document.getElementById('toastContainer');if(!c)return;var t=document.createElement('div');t.className='toast '+type;var ic={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',gold:'fa-coins'};t.innerHTML='<i class="fas '+(ic[type]||'fa-info-circle')+'"></i> '+msg;c.appendChild(t);setTimeout(function(){t.remove()},3000)}
+        function hexToRgb(h){return parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16)}
+
+        // INIT
+        document.addEventListener('DOMContentLoaded',function(){
+            var vid=getVisitorID();
+            if(bannedIPs.includes(vid)){document.getElementById('banScreen').style.display='flex';document.getElementById('navbar').style.display='none';document.querySelectorAll('section,footer,.music-control').forEach(function(e){e.style.display='none'});return}
+            registerViewer(vid);createParticles();createStars();updateNavCoins();
+            if(savedTheme)applySavedTheme();
+            checkDaily();initBgMusic();
+        });
+
+        function registerViewer(id){var ex=viewers.find(function(v){return v.id===id});if(!ex){viewers.push({id:id,name:'Visitor '+(viewers.length+1),firstVisit:new Date().toLocaleDateString(),lastVisit:new Date().toLocaleString(),visits:1,device:/Mobi|Android/i.test(navigator.userAgent)?'Mobile':'Desktop',browser:navigator.userAgent.includes('Chrome')?'Chrome':'Other'})}else{ex.visits++;ex.lastVisit=new Date().toLocaleString()}localStorage.setItem('gv_viewers',JSON.stringify(viewers))}
+        function createParticles(){var c=document.getElementById('bgAnimation');if(!c)return;var cl=['#7C5CFC','#E8567F','#3ECFB2','#5B9BF5','#A78BFA','#FBBF24'];for(var i=0;i<20;i++){var p=document.createElement('div');p.className='particle';var s=Math.random()*6+2;p.style.cssText='width:'+s+'px;height:'+s+'px;background:'+cl[Math.floor(Math.random()*cl.length)]+';left:'+Math.random()*100+'%;animation-duration:'+(Math.random()*18+12)+'s;animation-delay:'+(Math.random()*12)+'s;';c.appendChild(p)}}
+        function createStars(){var c=document.getElementById('bgAnimation');if(!c)return;for(var i=0;i<50;i++){var s=document.createElement('div');s.className='star';s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-duration:'+(Math.random()*3+2)+'s;animation-delay:'+(Math.random()*5)+'s;';c.appendChild(s)}}
+        window.addEventListener('scroll',function(){var n=document.getElementById('navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50)});
+        function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('active')}
+        function applySavedTheme(){if(!savedTheme)return;var r=document.documentElement;r.style.setProperty('--primary',savedTheme.primary);r.style.setProperty('--secondary',savedTheme.secondary);r.style.setProperty('--accent',savedTheme.accent);r.style.setProperty('--bg-dark',savedTheme.bg);r.style.setProperty('--bg-card',savedTheme.card);r.style.setProperty('--text-primary',savedTheme.text)}
+
+        // DAILY
+        function checkDaily(){var today=new Date().toDateString();if(lastDaily!==today){document.getElementById('dailyTaskText').textContent=DAILY_TASKS[Math.floor(Math.random()*DAILY_TASKS.length)];document.getElementById('dailyPopup').classList.add('active')}}
+        function claimDaily(){lastDaily=new Date().toDateString();localStorage.setItem('gv_last_daily',lastDaily);coins+=5;localStorage.setItem('gv_coins',coins);updateNavCoins();document.getElementById('dailyPopup').classList.remove('active');showToast('🎁 +5 daily coins!','gold');playBgSound('coin')}
+
+        // SEARCH
+        var SEARCH_PAGES=[
+            {name:'Home',url:'index.html',icon:'fa-home',desc:'welcome page'},
+            {name:'Arcade — Snake Game',url:'arcade.html#snake',icon:'fa-gamepad',desc:'play snake'},
+            {name:'Arcade — Ludo Game',url:'arcade.html#ludo',icon:'fa-dice',desc:'play ludo'},
+            {name:'Coin Shop',url:'shop.html',icon:'fa-store',desc:'buy skins'},
+            {name:'Redeem Code',url:'shop.html#redeem',icon:'fa-ticket-alt',desc:'enter codes'},
+            {name:'Inventory',url:'shop.html#inventory',icon:'fa-backpack',desc:'your items'},
+            {name:'Admin Panel',url:'admin.html',icon:'fa-shield-alt',desc:'control room'},
+            {name:'Admin — Skin Creator',url:'admin.html#skins',icon:'fa-tshirt',desc:'create skins'},
+            {name:'Admin — Theme Editor',url:'admin.html#theme',icon:'fa-paint-brush',desc:'change colors'},
+            {name:'Admin — Viewer Control',url:'admin.html#viewers',icon:'fa-users',desc:'manage users'},
+            {name:'Admin — Sound Manager',url:'admin.html#sounds',icon:'fa-music',desc:'change music'},
+            {name:'Admin — Live Code Editor',url:'admin.html#code',icon:'fa-code',desc:'inject HTML'},
+            {name:'Security Center',url:'index.html#security',icon:'fa-lock',desc:'admin info'}
+        ];
+        function handleSearch(){var q=document.getElementById('searchInput').value.toLowerCase().trim();var r=document.getElementById('searchResults');if(!q){r.classList.remove('active');return}var matches=SEARCH_PAGES.filter(function(p){return p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)});if(matches.length===0){r.innerHTML='<div class="search-result-item"><i class="fas fa-search"></i> no results found</div>';r.classList.add('active');return}var h='';for(var i=0;i<matches.length;i++){h+='<a href="'+matches[i].url+'" class="search-result-item"><i class="fas '+matches[i].icon+'"></i><div><strong>'+matches[i].name+'</strong><br><span style="font-size:.78rem;color:var(--text-muted)">'+matches[i].desc+'</span></div></a>'}r.innerHTML=h;r.classList.add('active')}
+
+        // ===== BACKGROUND MUSIC (Web Audio API - Ambient Synth) =====
+        var bgMusicCtx=null,bgMusicPlaying=false,bgMusicNodes=[];
+        var customBgMusicUrl=localStorage.getItem('gv_bg_music_url')||'';
+
+        function initBgMusic(){
+            var autoplay=localStorage.getItem('gv_music_autoplay');
+            if(autoplay==='true'){startBgMusic()}
+            updateMusicUI();
+        }
+
+        function toggleMusic(){
+            if(bgMusicPlaying){stopBgMusic()}else{startBgMusic()}
+            localStorage.setItem('gv_music_autoplay',bgMusicPlaying?'true':'false');
+            updateMusicUI();
+        }
+
+        function startBgMusic(){
+            try{
+                if(customBgMusicUrl){
+                    // Play custom uploaded audio
+                    if(!window._customAudio){window._customAudio=new Audio(customBgMusicUrl);window._customAudio.loop=true;window._customAudio.volume=0.3}
+                    window._customAudio.play();bgMusicPlaying=true;updateMusicUI();return;
+                }
+                // Generate ambient synth pad
+                if(!bgMusicCtx)bgMusicCtx=new(window.AudioContext||window.webkitAudioContext)();
+                var notes=[130.81,164.81,196.00,261.63];// C3 E3 G3 C4
+                for(var i=0;i<notes.length;i++){
+                    var o=bgMusicCtx.createOscillator();var g=bgMusicCtx.createGain();var f=bgMusicCtx.createBiquadFilter();
+                    o.type='sine';o.frequency.setValueAtTime(notes[i],bgMusicCtx.currentTime);
+                    f.type='lowpass';f.frequency.setValueAtTime(800,bgMusicCtx.currentTime);
+                    g.gain.setValueAtTime(0.03,bgMusicCtx.currentTime);
+                    o.connect(f);f.connect(g);g.connect(bgMusicCtx.destination);
+                    o.start();bgMusicNodes.push({osc:o,gain:g});
+                }
+                bgMusicPlaying=true;
+            }catch(e){console.log('music error',e)}
+            updateMusicUI();
+        }
+
+        function stopBgMusic(){
+            if(window._customAudio){window._customAudio.pause()}
+            for(var i=0;i<bgMusicNodes.length;i++){try{bgMusicNodes[i].osc.stop()}catch(e){}}
+            bgMusicNodes=[];bgMusicPlaying=false;updateMusicUI();
+        }
+
+        function updateMusicUI(){
+            var icon=document.getElementById('musicIcon');
+            var label=document.getElementById('musicLabel');
+            if(icon)icon.className=bgMusicPlaying?'fas fa-volume-up':'fas fa-volume-mute';
+            if(label)label.textContent=bgMusicPlaying?'♪ music on':'♪ music off';
+        }
+
+        function playBgSound(type){
+            try{
+                if(!bgMusicCtx)bgMusicCtx=new(window.AudioContext||window.webkitAudioContext)();
+                var o=bgMusicCtx.createOscillator(),g=bgMusicCtx.createGain();
+                o.connect(g);g.connect(bgMusicCtx.destination);var c=bgMusicCtx.currentTime;
+                switch(type){
+                    case'coin':o.type='sine';o.frequency.setValueAtTime(1200,c);o.frequency.linearRampToValueAtTime(1800,c+.08);g.gain.setValueAtTime(.1,c);g.gain.linearRampToValueAtTime(0,c+.12);o.start();o.stop(c+.12);break;
+                    case'click':o.type='sine';o.frequency.setValueAtTime(800,c);g.gain.setValueAtTime(.05,c);g.gain.linearRampToValueAtTime(0,c+.05);o.start();o.stop(c+.05);break;
+                    default:o.type='sine';o.frequency.setValueAtTime(440,c);g.gain.setValueAtTime(.08,c);g.gain.linearRampToValueAtTime(0,c+.1);o.start();o.stop(c+.1);
+                }
+            }catch(e){}
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 GameVault Arcade — Play Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{
+            --primary:#7C5CFC;--primary-light:#A78BFA;--secondary:#E8567F;
+            --accent:#3ECFB2;--neon-green:#4ADE80;--warm-yellow:#FBBF24;
+            --warm-orange:#FB923C;--bg-dark:#0C0C1D;--bg-darker:#08081A;
+            --bg-card:#151530;--text-primary:#F1F1F8;--text-secondary:#B0B0CC;
+            --text-muted:#6B6B8D;--border-color:#2A2A50;--success:#10B981;
+            --danger:#EF4444;--warning:#F59E0B;
+            --gradient-main:linear-gradient(135deg,#7C5CFC 0%,#E8567F 100%);
+            --gradient-gold:linear-gradient(135deg,#FBBF24 0%,#FB923C 100%);
+            --shadow-glow:0 0 40px rgba(124,92,252,0.15);
+            --font-heading:'Quicksand',sans-serif;--font-body:'Nunito',sans-serif;
+            --font-hand:'Kalam',cursive;--font-accent:'Caveat',cursive;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:var(--font-body);background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.7;font-size:17px}
+        .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;background:radial-gradient(ellipse at 20% 50%,rgba(124,92,252,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(232,86,127,0.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(62,207,178,0.05) 0%,transparent 50%),var(--bg-dark)}
+        .bg-animation .particle{position:absolute;border-radius:50%;animation:floatP linear infinite;opacity:.1;filter:blur(1px)}
+        .bg-animation .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle ease-in-out infinite}
+        @keyframes floatP{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.1;transform:translateY(90vh) scale(1)}90%{opacity:.1}100%{transform:translateY(-10vh) rotate(720deg) scale(0);opacity:0}}
+        @keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.5)}}
+        .ambient-orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.06;animation:orbF 20s ease-in-out infinite;pointer-events:none;z-index:-1}
+        .ambient-orb:nth-child(1){width:400px;height:400px;background:var(--primary);top:10%;left:-5%;animation-duration:25s}
+        .ambient-orb:nth-child(2){width:350px;height:350px;background:var(--secondary);top:60%;right:-5%;animation-duration:30s;animation-delay:-5s}
+        .ambient-orb:nth-child(3){width:300px;height:300px;background:var(--accent);bottom:10%;left:30%;animation-duration:22s;animation-delay:-10s}
+        @keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-darker)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:10px}
+              .navbar{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:14px 30px;display:flex;justify-content:space-between;align-items:center;background:rgba(12,12,29,0.85);backdrop-filter:blur(25px);border-bottom:1px solid rgba(124,92,252,0.1);transition:all .4s ease}
+        .navbar.scrolled{padding:10px 30px;background:rgba(12,12,29,0.95);box-shadow:0 5px 30px rgba(0,0,0,0.3)}
+        .nav-logo{font-family:var(--font-accent);font-size:2.2rem;font-weight:700;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;text-decoration:none}
+        .nav-links{display:flex;list-style:none;gap:22px;align-items:center}
+        .nav-links a{text-decoration:none;color:var(--text-secondary);font-weight:700;font-size:.95rem;font-family:var(--font-heading);transition:all .3s ease;padding:5px 0;position:relative}
+        .nav-links a:hover{color:var(--primary-light)}
+        .nav-links a::after{content:'';position:absolute;bottom:-2px;left:50%;width:0;height:2px;background:var(--gradient-main);transition:all .3s ease;transform:translateX(-50%)}
+        .nav-links a:hover::after{width:100%}
+        .nav-links a.active{color:var(--primary-light)}
+        .nav-links a.active::after{width:100%}
+        .coin-bar-nav{display:flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:50px;cursor:pointer;transition:all .3s ease;text-decoration:none}
+        .coin-bar-nav:hover{background:rgba(251,191,36,0.18)}
+        .coin-bar-nav .coin-icon{font-size:1rem}.coin-bar-nav .coin-amount{font-family:var(--font-heading);font-weight:800;color:var(--warm-yellow);font-size:.95rem}
+        .coin-bar-nav .coin-level{font-size:.7rem;color:var(--warm-orange);font-family:var(--font-hand)}
+        .hamburger{display:none;flex-direction:column;cursor:pointer;gap:5px;padding:5px}
+        .hamburger span{width:26px;height:3px;background:var(--text-primary);border-radius:5px}
+        .mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100vh;background:rgba(8,8,26,0.98);z-index:999;flex-direction:column;justify-content:center;align-items:center;gap:25px}
+        .mobile-menu.active{display:flex}
+        .mobile-menu a{font-size:1.3rem;text-decoration:none;color:var(--text-primary);font-weight:700;font-family:var(--font-heading)}
+        .mobile-menu .close-btn{position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:var(--text-primary);background:none;border:none}
+
+        .btn{padding:14px 32px;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:9px;border:none;font-family:var(--font-heading)}
+        .btn-primary{background:var(--gradient-main);color:white;box-shadow:0 4px 20px rgba(124,92,252,0.35)}
+        .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(124,92,252,0.5)}
+        .btn-secondary{background:rgba(255,255,255,0.05);color:var(--text-primary);border:1.5px solid var(--border-color)}
+        .btn-secondary:hover{border-color:var(--primary);transform:translateY(-3px)}
+        .btn-gold{background:var(--gradient-gold);color:#1a1a1a;box-shadow:0 4px 20px rgba(251,191,36,0.3)}
+        .btn-gold:hover{transform:translateY(-3px)}
+        .btn-small{padding:8px 18px;font-size:.85rem;border-radius:10px}
+        .btn-play{padding:18px 50px;font-size:1.2rem;border-radius:18px;box-shadow:0 6px 30px rgba(124,92,252,0.4)}
+        .btn-play:hover{transform:translateY(-4px) scale(1.05)}
+        .btn-danger{background:var(--danger);color:white}
+        .btn-success{background:var(--success);color:white}
+
+        .section{padding:85px 28px;max-width:1200px;margin:0 auto}
+        .section-header{text-align:center;margin-bottom:45px}
+        .section-header .tag{display:inline-block;padding:7px 20px;background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.2);border-radius:50px;font-size:.85rem;font-family:var(--font-hand);color:var(--primary-light);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+        .section-header h2{font-family:var(--font-heading);font-size:2.4rem;font-weight:800;margin-bottom:10px}
+        .section-header p{color:var(--text-secondary);font-size:1.05rem;max-width:550px;margin:0 auto;font-family:var(--font-hand)}
+        .section-divider{width:60px;height:4px;background:var(--gradient-main);border-radius:4px;margin:0 auto 16px}
+
+        .coin-display{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:25px 28px;margin-bottom:35px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+        .coin-left{display:flex;align-items:center;gap:14px}
+        .coin-big-icon{font-size:2.5rem}
+        .coin-info h3{font-family:var(--font-heading);font-weight:800;font-size:1.5rem;color:var(--warm-yellow)}
+        .coin-info .coin-subtitle{font-family:var(--font-hand);color:var(--text-muted);font-size:.9rem}
+        .coin-progress-container{flex:1;min-width:180px;max-width:380px}
+        .coin-progress-label{display:flex;justify-content:space-between;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted);margin-bottom:5px}
+        .coin-progress-bar{width:100%;height:13px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;border:1px solid var(--border-color)}
+        .coin-progress-fill{height:100%;background:var(--gradient-gold);border-radius:10px;transition:width .6s ease}
+        .coin-right{display:flex;gap:10px}
+
+        .games-showcase{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:25px}
+        .game-showcase-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:22px;overflow:hidden;transition:all .4s ease;cursor:pointer}
+        .game-showcase-card:hover{transform:translateY(-8px);border-color:var(--primary);box-shadow:0 20px 60px rgba(124,92,252,0.12),var(--shadow-glow)}
+        .game-thumb-container{width:100%;height:200px;position:relative;overflow:hidden}
+        .game-thumb-container canvas{width:100%;height:100%}
+        .thumb-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent 30%,rgba(12,12,29,0.95));display:flex;flex-direction:column;justify-content:flex-end;padding:20px}
+        .game-title-overlay{font-family:var(--font-heading);font-size:1.4rem;font-weight:800}
+        .game-genre-overlay{font-family:var(--font-hand);font-size:.88rem;color:var(--accent)}
+        .game-showcase-body{padding:22px}
+        .game-showcase-body p{font-family:var(--font-hand);color:var(--text-secondary);font-size:.95rem;line-height:1.6;margin-bottom:16px}
+        .game-meta{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+        .game-meta-item{display:flex;align-items:center;gap:5px;font-size:.82rem;color:var(--text-muted);font-family:var(--font-hand);padding:4px 12px;background:rgba(255,255,255,0.03);border-radius:50px;border:1px solid var(--border-color)}
+        .game-reward{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:50px;font-size:.85rem;font-family:var(--font-heading);font-weight:700;color:var(--warm-yellow)}
+              .game-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:2000;justify-content:center;align-items:center;backdrop-filter:blur(10px)}
+        .game-modal.active{display:flex}
+        .game-modal-content{background:var(--bg-card);border:1px solid var(--border-color);border-radius:22px;width:95%;max-width:680px;max-height:95vh;overflow-y:auto;position:relative}
+        .game-modal-header{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);position:sticky;top:0;background:var(--bg-card);z-index:5;border-radius:22px 22px 0 0}
+        .game-modal-header h2{font-family:var(--font-heading);font-size:1.2rem;font-weight:800;display:flex;align-items:center;gap:8px}
+        .game-modal-header .close-game{background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer}
+        .inv-btn{padding:5px 14px;background:rgba(124,92,252,0.15);border:1px solid rgba(124,92,252,0.3);border-radius:50px;color:var(--primary-light);font-size:.82rem;font-family:var(--font-heading);font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px}
+        .game-modal-body{padding:18px}
+        .game-canvas-container{width:100%;display:flex;justify-content:center;margin-bottom:16px}
+        .game-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+        .game-score-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:14px;margin-bottom:14px;font-family:var(--font-heading);font-size:1rem}
+        .game-score-bar .score-val{font-weight:800;color:var(--neon-green);font-size:1.2rem}
+        .game-score-bar .coins-earned{color:var(--warm-yellow);font-weight:700}
+
+        .dpad{display:none;margin:14px auto;width:160px;height:160px;position:relative}
+        .dpad-btn{position:absolute;width:50px;height:50px;background:rgba(124,92,252,0.2);border:1.5px solid rgba(124,92,252,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--primary-light);font-size:1.2rem;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+        .dpad-btn:active{background:rgba(124,92,252,0.5);transform:scale(.9)}
+        .dpad-up{top:0;left:55px}.dpad-down{bottom:0;left:55px}.dpad-left{top:55px;left:0}.dpad-right{top:55px;right:0}
+
+        .dice-container{text-align:center;margin:14px 0}
+        .dice{width:70px;height:70px;background:var(--bg-card);border:2px solid var(--border-color);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;font-family:var(--font-heading);font-weight:900;cursor:pointer;transition:all .3s ease;user-select:none}
+        .dice:hover{border-color:var(--primary);transform:scale(1.1)}
+        .dice.rolling{animation:diceRoll .5s ease}
+        @keyframes diceRoll{0%{transform:rotate(0) scale(1)}25%{transform:rotate(90deg) scale(1.2)}50%{transform:rotate(180deg) scale(1)}75%{transform:rotate(270deg) scale(1.2)}100%{transform:rotate(360deg) scale(1)}}
+        .turn-indicator{font-family:var(--font-heading);font-weight:700;font-size:1rem;padding:7px 20px;border-radius:50px;display:inline-block;margin-bottom:8px}
+
+        /* SNAKE EFFECTS */
+        .snake-food-particle{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;animation:foodBurst .5s ease-out forwards}
+        @keyframes foodBurst{0%{opacity:1;transform:scale(1) translate(0,0)}100%{opacity:0;transform:scale(0) translate(var(--tx),var(--ty))}}
+
+        /* LEVEL UP */
+        .levelup-popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:7000;justify-content:center;align-items:center;backdrop-filter:blur(12px)}
+        .levelup-popup.active{display:flex}
+        .levelup-box{background:var(--bg-card);border:2px solid var(--primary);border-radius:28px;padding:45px;max-width:430px;width:92%;text-align:center;box-shadow:0 0 80px rgba(124,92,252,0.3);animation:lvlAnim .6s ease;position:relative}
+        @keyframes lvlAnim{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+        .levelup-box .lvl-icon{font-size:4.5rem;margin-bottom:12px}
+        .levelup-box h2{font-family:var(--font-heading);font-size:1.7rem;font-weight:900;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .levelup-box .lvl-name{font-family:var(--font-accent);font-size:1.8rem;color:var(--warm-yellow);margin:8px 0}
+        .levelup-box .lvl-reward{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;color:var(--neon-green);margin-bottom:15px}
+        .lvl-particles{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;border-radius:28px}
+        .lvl-particles .lp{position:absolute;width:8px;height:8px;border-radius:50%;animation:lpF 2s ease-out forwards}
+        @keyframes lpF{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-200px) scale(0)}}
+
+        /* INVENTORY */
+        .inventory-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:5000;justify-content:center;align-items:center;backdrop-filter:blur(10px)}
+        .inventory-modal.active{display:flex}
+        .inv-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:24px;padding:32px;max-width:540px;width:92%;max-height:85vh;overflow-y:auto;position:relative}
+        .inv-box .close-inv{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer}
+        .inv-box h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:800;margin-bottom:18px}
+        .inv-item{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid rgba(42,42,80,0.4);border-radius:12px;gap:12px}
+        .inv-item:hover{background:rgba(124,92,252,0.05)}
+        .inv-item-left{display:flex;align-items:center;gap:12px}
+        .inv-item-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+        .inv-item-info h4{font-family:var(--font-heading);font-weight:700;font-size:.95rem}
+        .inv-item-info span{font-family:var(--font-hand);font-size:.82rem;color:var(--text-muted)}
+        .equip-btn{padding:5px 14px;border-radius:10px;font-family:var(--font-heading);font-weight:700;font-size:.8rem;cursor:pointer;border:none}
+        .equip-btn.equipped{background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.3)}
+        .equip-btn.not-equipped{background:var(--gradient-main);color:white}
+
+        .toast-container{position:fixed;top:76px;right:18px;z-index:8000;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:13px 22px;border-radius:12px;font-size:.9rem;font-family:var(--font-hand);display:flex;align-items:center;gap:8px;animation:slideIn .4s ease,fadeOut .4s ease 2.6s both;min-width:250px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+        .toast.success{background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.3);color:var(--success)}
+        .toast.error{background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.3);color:var(--danger)}
+        .toast.info{background:rgba(124,92,252,0.2);border:1px solid rgba(124,92,252,0.3);color:var(--primary-light)}
+        .toast.gold{background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.3);color:var(--warm-yellow)}
+        @keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes fadeOut{to{opacity:0;transform:translateX(120%)}}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+        .footer{background:var(--bg-card);border-top:1px solid var(--border-color);padding:35px 28px 22px;text-align:center}
+        .footer p{color:var(--text-muted);font-family:var(--font-hand);font-size:.95rem}
+        .footer a{color:var(--primary-light);text-decoration:none}
+
+        @media(max-width:768px){
+            .navbar{padding:12px 14px}.nav-links{display:none}.hamburger{display:flex}
+            .section{padding:55px 14px}.section-header h2{font-size:1.8rem}
+            .games-showcase{grid-template-columns:1fr}
+            .coin-display{flex-direction:column;text-align:center}
+            .dpad{display:block}
+            .game-modal-content{width:98%;max-height:98vh;border-radius:14px}
+            .btn-play{padding:14px 38px;font-size:1.05rem}
+        }
+        @media(max-width:480px){.game-modal-body{padding:10px}}
+    </style>
+</head>
+<body>
+    <div class="ambient-orb"></div><div class="ambient-orb"></div><div class="ambient-orb"></div>
+    <div class="bg-animation" id="bgAnimation"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- LEVEL UP -->
+    <div class="levelup-popup" id="levelupPopup">
+        <div class="levelup-box">
+            <div class="lvl-particles" id="lvlParticles"></div>
+            <div class="lvl-icon">🏆</div><h2>LEVEL UP!</h2>
+            <div class="lvl-name" id="lvlUpName">casual</div>
+            <div class="lvl-reward" id="lvlUpReward">+50 🪙</div>
+            <button class="btn btn-primary" onclick="closeLevelUp()" style="width:100%;margin-top:8px"><i class="fas fa-check"></i> awesome!</button>
+        </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="inventory-modal" id="inventoryModal">
+        <div class="inv-box">
+            <button class="close-inv" onclick="closeInventory()">✕</button>
+            <h3>🎒 <span id="invTitle">inventory</span></h3>
+            <div id="inventoryList"></div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">GameVault 🎮</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="arcade.html" class="active">Arcade</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="admin.html">🔐 Admin</a></li>
+        </ul>
+        <a href="shop.html" class="coin-bar-nav"><span class="coin-icon">🪙</span><span class="coin-amount" id="navCoins">0</span><span class="coin-level" id="navLevel">Lv.1</span></a>
+        <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-btn" onclick="toggleMobile()">✕</button>
+        <a href="index.html">🏠 Home</a><a href="arcade.html">🎮 Arcade</a><a href="shop.html">🛒 Shop</a><a href="admin.html">🔐 Admin</a>
+    </div>
+
+    <!-- ARCADE -->
+    <section class="section" id="arcade" style="padding-top:110px">
+        <div class="section-header"><span class="tag">🕹️ arcade</span><div class="section-divider"></div><h2>choose your game</h2><p>play and earn coins ~</p></div>
+        <div class="coin-display">
+            <div class="coin-left"><div class="coin-big-icon">🪙</div><div class="coin-info"><h3 id="mainCoinDisplay">0 coins</h3><div class="coin-subtitle" id="coinLevelText">level 1 — newbie</div></div></div>
+            <div class="coin-progress-container"><div class="coin-progress-label"><span id="currentLevelLabel">Lv.1</span><span id="nextLevelLabel">Lv.2 (100)</span></div><div class="coin-progress-bar"><div class="coin-progress-fill" id="coinProgressFill" style="width:0%"></div></div></div>
+            <div class="coin-right"><a href="shop.html" class="btn btn-gold btn-small"><i class="fas fa-store"></i> shop</a></div>
+        </div>
+        <div class="games-showcase">
+            <div class="game-showcase-card" onclick="openGame('snake')" id="snakeCard">
+                <div class="game-thumb-container"><canvas id="snakeThumb" width="400" height="200"></canvas><div class="thumb-overlay"><div class="game-title-overlay">🐍 Snake Game</div><div class="game-genre-overlay">classic arcade</div></div></div>
+                <div class="game-showcase-body"><p>eat food, grow longer, don't crash ~</p><div class="game-meta"><div class="game-meta-item"><i class="fas fa-user"></i> 1P</div><div class="game-meta-item"><i class="fas fa-clock"></i> 2-5m</div><div class="game-meta-item"><i class="fas fa-star"></i> easy</div></div><div class="game-reward">🪙 1 coin/food</div></div>
+            </div>
+            <div class="game-showcase-card" onclick="openGame('ludo')" id="ludoCard">
+                <div class="game-thumb-container"><canvas id="ludoThumb" width="400" height="200"></canvas><div class="thumb-overlay"><div class="game-title-overlay">🎲 Ludo Classic</div><div class="game-genre-overlay">board game</div></div></div>
+                <div class="game-showcase-body"><p>roll dice, race home, beat AI ~</p><div class="game-meta"><div class="game-meta-item"><i class="fas fa-users"></i> vs AI</div><div class="game-meta-item"><i class="fas fa-clock"></i> 5-15m</div><div class="game-meta-item"><i class="fas fa-star"></i> medium</div></div><div class="game-reward">🪙 25 on win</div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer"><p>© 2024 GameVault by <a href="index.html">Mrin</a> 💜</p></footer>
+
+    <!-- SNAKE MODAL -->
+    <div class="game-modal" id="snakeModal">
+        <div class="game-modal-content">
+            <div class="game-modal-header"><h2>🐍 Snake</h2><div style="display:flex;gap:8px;align-items:center"><button class="inv-btn" onclick="openInventory('snake')"><i class="fas fa-tshirt"></i> skins</button><button class="close-game" onclick="closeGame('snake')">✕</button></div></div>
+            <div class="game-modal-body">
+                <div class="game-score-bar"><div>score: <span class="score-val" id="snakeScore">0</span></div><div>best: <span class="score-val" id="snakeBest">0</span></div><div class="coins-earned">🪙 <span id="snakeCoinsEarned">0</span></div></div>
+                <div class="game-canvas-container" style="position:relative"><canvas id="snakeCanvas" width="400" height="400" style="background:var(--bg-darker);border:2px solid var(--border-color);border-radius:10px;max-width:100%"></canvas><div id="snakeEffects" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"></div></div>
+                <div class="dpad"><div class="dpad-btn dpad-up" onclick="setSnakeDir(0,-1)"><i class="fas fa-chevron-up"></i></div><div class="dpad-btn dpad-down" onclick="setSnakeDir(0,1)"><i class="fas fa-chevron-down"></i></div><div class="dpad-btn dpad-left" onclick="setSnakeDir(-1,0)"><i class="fas fa-chevron-left"></i></div><div class="dpad-btn dpad-right" onclick="setSnakeDir(1,0)"><i class="fas fa-chevron-right"></i></div></div>
+                <div class="game-controls"><button class="btn btn-primary btn-play" onclick="startSnake()"><i class="fas fa-play"></i> PLAY</button><button class="btn btn-secondary" onclick="resetSnake()"><i class="fas fa-redo"></i> restart</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LUDO MODAL -->
+    <div class="game-modal" id="ludoModal">
+        <div class="game-modal-content" style="max-width:540px">
+            <div class="game-modal-header"><h2>🎲 Ludo</h2><div style="display:flex;gap:8px;align-items:center"><button class="inv-btn" onclick="openInventory('ludo')"><i class="fas fa-tshirt"></i> skins</button><button class="close-game" onclick="closeGame('ludo')">✕</button></div></div>
+            <div class="game-modal-body">
+                <div class="game-score-bar"><div>you: <span class="score-val" style="color:var(--danger)" id="ludoPlayerScore">0/4</span></div><div class="turn-indicator" id="ludoTurnIndicator" style="background:rgba(239,68,68,0.2);color:#EF4444">your turn</div><div class="coins-earned">🪙 <span id="ludoCoinsEarned">0</span></div></div>
+                <div class="dice-container"><div class="dice" id="ludoDice" onclick="rollLudoDice()">🎲</div><p style="font-family:var(--font-hand);color:var(--text-muted);font-size:.88rem;margin-top:6px" id="ludoMessage">tap dice ~</p></div>
+                <div id="ludoBoardContainer" style="margin-bottom:12px"></div>
+                <div class="game-controls"><button class="btn btn-primary btn-play" onclick="resetLudo()"><i class="fas fa-redo"></i> NEW GAME</button></div>
+            </div>
+        </div>
+    </div>
+    <body>
+    <div class="ambient-orb"></div><div class="ambient-orb"></div><div class="ambient-orb"></div>
+    <div class="bg-animation" id="bgAnimation"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- LEVEL UP -->
+    <div class="levelup-popup" id="levelupPopup">
+        <div class="levelup-box">
+            <div class="lvl-particles" id="lvlParticles"></div>
+            <div class="lvl-icon">🏆</div><h2>LEVEL UP!</h2>
+            <div class="lvl-name" id="lvlUpName">casual</div>
+            <div class="lvl-reward" id="lvlUpReward">+50 🪙</div>
+            <button class="btn btn-primary" onclick="closeLevelUp()" style="width:100%;margin-top:8px"><i class="fas fa-check"></i> awesome!</button>
+        </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="inventory-modal" id="inventoryModal">
+        <div class="inv-box">
+            <button class="close-inv" onclick="closeInventory()">✕</button>
+            <h3>🎒 <span id="invTitle">inventory</span></h3>
+            <div id="inventoryList"></div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">GameVault 🎮</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="arcade.html" class="active">Arcade</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="admin.html">🔐 Admin</a></li>
+        </ul>
+        <a href="shop.html" class="coin-bar-nav"><span class="coin-icon">🪙</span><span class="coin-amount" id="navCoins">0</span><span class="coin-level" id="navLevel">Lv.1</span></a>
+        <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-btn" onclick="toggleMobile()">✕</button>
+        <a href="index.html">🏠 Home</a><a href="arcade.html">🎮 Arcade</a><a href="shop.html">🛒 Shop</a><a href="admin.html">🔐 Admin</a>
+    </div>
+
+    <!-- ARCADE -->
+    <section class="section" id="arcade" style="padding-top:110px">
+        <div class="section-header"><span class="tag">🕹️ arcade</span><div class="section-divider"></div><h2>choose your game</h2><p>play and earn coins ~</p></div>
+        <div class="coin-display">
+            <div class="coin-left"><div class="coin-big-icon">🪙</div><div class="coin-info"><h3 id="mainCoinDisplay">0 coins</h3><div class="coin-subtitle" id="coinLevelText">level 1 — newbie</div></div></div>
+            <div class="coin-progress-container"><div class="coin-progress-label"><span id="currentLevelLabel">Lv.1</span><span id="nextLevelLabel">Lv.2 (100)</span></div><div class="coin-progress-bar"><div class="coin-progress-fill" id="coinProgressFill" style="width:0%"></div></div></div>
+            <div class="coin-right"><a href="shop.html" class="btn btn-gold btn-small"><i class="fas fa-store"></i> shop</a></div>
+        </div>
+        <div class="games-showcase">
+            <div class="game-showcase-card" onclick="openGame('snake')" id="snakeCard">
+                <div class="game-thumb-container"><canvas id="snakeThumb" width="400" height="200"></canvas><div class="thumb-overlay"><div class="game-title-overlay">🐍 Snake Game</div><div class="game-genre-overlay">classic arcade</div></div></div>
+                <div class="game-showcase-body"><p>eat food, grow longer, don't crash ~</p><div class="game-meta"><div class="game-meta-item"><i class="fas fa-user"></i> 1P</div><div class="game-meta-item"><i class="fas fa-clock"></i> 2-5m</div><div class="game-meta-item"><i class="fas fa-star"></i> easy</div></div><div class="game-reward">🪙 1 coin/food</div></div>
+            </div>
+            <div class="game-showcase-card" onclick="openGame('ludo')" id="ludoCard">
+                <div class="game-thumb-container"><canvas id="ludoThumb" width="400" height="200"></canvas><div class="thumb-overlay"><div class="game-title-overlay">🎲 Ludo Classic</div><div class="game-genre-overlay">board game</div></div></div>
+                <div class="game-showcase-body"><p>roll dice, race home, beat AI ~</p><div class="game-meta"><div class="game-meta-item"><i class="fas fa-users"></i> vs AI</div><div class="game-meta-item"><i class="fas fa-clock"></i> 5-15m</div><div class="game-meta-item"><i class="fas fa-star"></i> medium</div></div><div class="game-reward">🪙 25 on win</div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer"><p>© 2024 GameVault by <a href="index.html">Mrin</a> 💜</p></footer>
+
+    <!-- SNAKE MODAL -->
+    <div class="game-modal" id="snakeModal">
+        <div class="game-modal-content">
+            <div class="game-modal-header"><h2>🐍 Snake</h2><div style="display:flex;gap:8px;align-items:center"><button class="inv-btn" onclick="openInventory('snake')"><i class="fas fa-tshirt"></i> skins</button><button class="close-game" onclick="closeGame('snake')">✕</button></div></div>
+            <div class="game-modal-body">
+                <div class="game-score-bar"><div>score: <span class="score-val" id="snakeScore">0</span></div><div>best: <span class="score-val" id="snakeBest">0</span></div><div class="coins-earned">🪙 <span id="snakeCoinsEarned">0</span></div></div>
+                <div class="game-canvas-container" style="position:relative"><canvas id="snakeCanvas" width="400" height="400" style="background:var(--bg-darker);border:2px solid var(--border-color);border-radius:10px;max-width:100%"></canvas><div id="snakeEffects" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"></div></div>
+                <div class="dpad"><div class="dpad-btn dpad-up" onclick="setSnakeDir(0,-1)"><i class="fas fa-chevron-up"></i></div><div class="dpad-btn dpad-down" onclick="setSnakeDir(0,1)"><i class="fas fa-chevron-down"></i></div><div class="dpad-btn dpad-left" onclick="setSnakeDir(-1,0)"><i class="fas fa-chevron-left"></i></div><div class="dpad-btn dpad-right" onclick="setSnakeDir(1,0)"><i class="fas fa-chevron-right"></i></div></div>
+                <div class="game-controls"><button class="btn btn-primary btn-play" onclick="startSnake()"><i class="fas fa-play"></i> PLAY</button><button class="btn btn-secondary" onclick="resetSnake()"><i class="fas fa-redo"></i> restart</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LUDO MODAL -->
+    <div class="game-modal" id="ludoModal">
+        <div class="game-modal-content" style="max-width:540px">
+            <div class="game-modal-header"><h2>🎲 Ludo</h2><div style="display:flex;gap:8px;align-items:center"><button class="inv-btn" onclick="openInventory('ludo')"><i class="fas fa-tshirt"></i> skins</button><button class="close-game" onclick="closeGame('ludo')">✕</button></div></div>
+            <div class="game-modal-body">
+                <div class="game-score-bar"><div>you: <span class="score-val" style="color:var(--danger)" id="ludoPlayerScore">0/4</span></div><div class="turn-indicator" id="ludoTurnIndicator" style="background:rgba(239,68,68,0.2);color:#EF4444">your turn</div><div class="coins-earned">🪙 <span id="ludoCoinsEarned">0</span></div></div>
+                <div class="dice-container"><div class="dice" id="ludoDice" onclick="rollLudoDice()">🎲</div><p style="font-family:var(--font-hand);color:var(--text-muted);font-size:.88rem;margin-top:6px" id="ludoMessage">tap dice ~</p></div>
+                <div id="ludoBoardContainer" style="margin-bottom:12px"></div>
+                <div class="game-controls"><button class="btn btn-primary btn-play" onclick="resetLudo()"><i class="fas fa-redo"></i> NEW GAME</button></div>
+            </div>
+        </div>
+    </div>
+        <script>
+        // ===== SHARED =====
+        var coins=parseInt(localStorage.getItem('gv_coins'))||0;
+        var ownedItems=JSON.parse(localStorage.getItem('gv_owned'))||[];
+        var equippedSkins=JSON.parse(localStorage.getItem('gv_equipped'))||{snake:'default',ludo:'default',dice:'default',board:'default'};
+        var snakeBest=parseInt(localStorage.getItem('gv_snake_best'))||0;
+        var customSkins=JSON.parse(localStorage.getItem('gv_custom_skins'))||[];
+        var savedTheme=JSON.parse(localStorage.getItem('gv_theme'))||null;
+        var previousLevel=0;
+        var LEVELS=[{name:'newbie',min:0,max:100,reward:0},{name:'casual',min:100,max:300,reward:50},{name:'rising star',min:300,max:600,reward:75},{name:'pro',min:600,max:1000,reward:100},{name:'elite',min:1000,max:2000,reward:150},{name:'legendary',min:2000,max:5000,reward:250},{name:'god tier',min:5000,max:99999,reward:500}];
+        var BASE_SHOP=[{id:'snake_neon',type:'snake',name:'Neon Snake',desc:'neon cyan ✨',price:50,emoji:'🐍',color:'#22D3EE',snakeColor:'#22D3EE'},{id:'snake_fire',type:'snake',name:'Fire Snake',desc:'fire 🔥',price:100,emoji:'🔥',color:'#EF4444',snakeColor:'#EF4444'},{id:'snake_galaxy',type:'snake',name:'Galaxy Snake',desc:'galaxy 🌌',price:200,emoji:'🌌',color:'#8B5CF6',snakeColor:'#8B5CF6'},{id:'snake_gold',type:'snake',name:'Gold Snake',desc:'gold 👑',price:500,emoji:'👑',color:'#FBBF24',snakeColor:'#FBBF24'},{id:'ludo_crystal',type:'ludo',name:'Crystal',desc:'crystal 💎',price:75,emoji:'💎',color:'#06B6D4'},{id:'ludo_flame',type:'ludo',name:'Flame',desc:'flame 🔥',price:150,emoji:'🔥',color:'#F43F5E'},{id:'ludo_royal',type:'ludo',name:'Royal',desc:'royal 👑',price:300,emoji:'👑',color:'#FBBF24'},{id:'ludo_shadow',type:'ludo',name:'Shadow',desc:'shadow 🌑',price:250,emoji:'🌑',color:'#6366F1'},{id:'dice_rainbow',type:'dice',name:'Rainbow Dice',desc:'rainbow 🌈',price:100,emoji:'🌈',color:'#EC4899'},{id:'dice_skull',type:'dice',name:'Skull Dice',desc:'skull 💀',price:175,emoji:'💀',color:'#EF4444'},{id:'board_space',type:'board',name:'Space Board',desc:'space 🚀',price:400,emoji:'🚀',color:'#3B82F6'},{id:'board_forest',type:'board',name:'Forest Board',desc:'forest 🌲',price:350,emoji:'🌲',color:'#10B981'}];
+        function getAllShopItems(){return BASE_SHOP.concat(customSkins)}
+
+        // SOUND
+        var audioCtx=null;
+        function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)()}
+        function playSound(t){try{initAudio();var o=audioCtx.createOscillator(),g=audioCtx.createGain(),c=audioCtx.currentTime;o.connect(g);g.connect(audioCtx.destination);switch(t){case'eat':o.type='sine';o.frequency.setValueAtTime(600,c);o.frequency.linearRampToValueAtTime(900,c+.1);g.gain.setValueAtTime(.15,c);g.gain.linearRampToValueAtTime(0,c+.15);o.start();o.stop(c+.15);break;case'die':o.type='sawtooth';o.frequency.setValueAtTime(400,c);o.frequency.linearRampToValueAtTime(100,c+.4);g.gain.setValueAtTime(.12,c);g.gain.linearRampToValueAtTime(0,c+.4);o.start();o.stop(c+.4);break;case'dice':o.type='square';o.frequency.setValueAtTime(300,c);o.frequency.linearRampToValueAtTime(500,c+.08);g.gain.setValueAtTime(.1,c);g.gain.linearRampToValueAtTime(0,c+.12);o.start();o.stop(c+.12);break;case'capture':o.type='triangle';o.frequency.setValueAtTime(800,c);o.frequency.linearRampToValueAtTime(200,c+.3);g.gain.setValueAtTime(.15,c);g.gain.linearRampToValueAtTime(0,c+.3);o.start();o.stop(c+.3);break;case'home':o.type='sine';o.frequency.setValueAtTime(523,c);o.frequency.setValueAtTime(784,c+.2);g.gain.setValueAtTime(.15,c);g.gain.linearRampToValueAtTime(0,c+.4);o.start();o.stop(c+.4);break;case'win':playMelody([523,659,784,1047],[.12,.12,.12,.25]);return;case'levelup':playMelody([392,440,523,659,784],[.1,.1,.1,.1,.3]);return;case'coin':o.type='sine';o.frequency.setValueAtTime(1200,c);o.frequency.linearRampToValueAtTime(1800,c+.08);g.gain.setValueAtTime(.1,c);g.gain.linearRampToValueAtTime(0,c+.12);o.start();o.stop(c+.12);break;case'click':o.type='sine';o.frequency.setValueAtTime(800,c);g.gain.setValueAtTime(.05,c);g.gain.linearRampToValueAtTime(0,c+.05);o.start();o.stop(c+.05);break;default:o.type='sine';o.frequency.setValueAtTime(440,c);g.gain.setValueAtTime(.08,c);g.gain.linearRampToValueAtTime(0,c+.1);o.start();o.stop(c+.1)}}catch(e){}}
+        function playMelody(f,d){try{initAudio();var t=audioCtx.currentTime;for(var i=0;i<f.length;i++){var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='sine';o.frequency.setValueAtTime(f[i],t);g.gain.setValueAtTime(.12,t);g.gain.linearRampToValueAtTime(0,t+d[i]);o.start(t);o.stop(t+d[i]);t+=d[i]}}catch(e){}}
+
+        // INIT
+        document.addEventListener('DOMContentLoaded',function(){
+            createBg();previousLevel=getLevel().level;updateCoinDisplay();
+            drawSnakeThumb();drawLudoThumb();
+            document.getElementById('snakeBest').textContent=snakeBest;
+            if(savedTheme)applySavedTheme();
+            if(location.hash==='#snake')setTimeout(function(){openGame('snake')},500);
+            if(location.hash==='#ludo')setTimeout(function(){openGame('ludo')},500);
+        });
+        function createBg(){var c=document.getElementById('bgAnimation');if(!c)return;var cl=['#7C5CFC','#E8567F','#3ECFB2','#5B9BF5','#A78BFA','#FBBF24'];for(var i=0;i<20;i++){var p=document.createElement('div');p.className='particle';var s=Math.random()*6+2;p.style.cssText='width:'+s+'px;height:'+s+'px;background:'+cl[Math.floor(Math.random()*cl.length)]+';left:'+Math.random()*100+'%;animation-duration:'+(Math.random()*18+12)+'s;animation-delay:'+(Math.random()*12)+'s;';c.appendChild(p)}for(var j=0;j<50;j++){var st=document.createElement('div');st.className='star';st.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-duration:'+(Math.random()*3+2)+'s;animation-delay:'+(Math.random()*5)+'s;';c.appendChild(st)}}
+        window.addEventListener('scroll',function(){var n=document.getElementById('navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50)});
+        function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('active')}
+        function applySavedTheme(){if(!savedTheme)return;var r=document.documentElement;r.style.setProperty('--primary',savedTheme.primary);r.style.setProperty('--secondary',savedTheme.secondary);r.style.setProperty('--accent',savedTheme.accent);r.style.setProperty('--bg-dark',savedTheme.bg);r.style.setProperty('--bg-card',savedTheme.card);r.style.setProperty('--text-primary',savedTheme.text)}
+
+        // COINS
+        function getLevel(){for(var i=LEVELS.length-1;i>=0;i--)if(coins>=LEVELS[i].min)return{level:i+1,data:LEVELS[i]};return{level:1,data:LEVELS[0]}}
+        function addCoins(a){coins+=a;if(coins<0)coins=0;localStorage.setItem('gv_coins',coins);updateCoinDisplay();checkLevelUp()}
+        function updateCoinDisplay(){var l=getLevel();document.getElementById('navCoins').textContent=coins;document.getElementById('navLevel').textContent='Lv.'+l.level;document.getElementById('mainCoinDisplay').textContent=coins+' coins';document.getElementById('coinLevelText').textContent='level '+l.level+' — '+l.data.name;document.getElementById('currentLevelLabel').textContent='Lv.'+l.level;var nl=l.level<LEVELS.length?LEVELS[l.level]:LEVELS[LEVELS.length-1];document.getElementById('nextLevelLabel').textContent='Lv.'+(l.level+1)+' ('+nl.min+')';var pr=((coins-l.data.min)/(l.data.max-l.data.min))*100;if(pr>100)pr=100;if(pr<0)pr=0;document.getElementById('coinProgressFill').style.width=pr+'%'}
+        function checkLevelUp(){var nl=getLevel().level;if(nl>previousLevel&&previousLevel>0){var ld=LEVELS[nl-1];playSound('levelup');document.getElementById('lvlUpName').textContent=ld.name;document.getElementById('lvlUpReward').textContent='+'+ld.reward+' 🪙';var pc=document.getElementById('lvlParticles');pc.innerHTML='';var cl=['#7C5CFC','#E8567F','#FBBF24','#4ADE80','#5B9BF5'];for(var i=0;i<25;i++){var d=document.createElement('div');d.className='lp';d.style.cssText='left:'+Math.random()*100+'%;bottom:0;background:'+cl[Math.floor(Math.random()*cl.length)]+';animation-delay:'+(Math.random()*.5)+'s;';pc.appendChild(d)}document.getElementById('levelupPopup').classList.add('active');coins+=ld.reward;localStorage.setItem('gv_coins',coins);updateCoinDisplay()}previousLevel=nl}
+        function closeLevelUp(){document.getElementById('levelupPopup').classList.remove('active')}
+
+        // TOAST
+        function showToast(msg,type){type=type||'success';var c=document.getElementById('toastContainer');var t=document.createElement('div');t.className='toast '+type;var ic={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',gold:'fa-coins'};t.innerHTML='<i class="fas '+(ic[type]||'fa-info-circle')+'"></i> '+msg;c.appendChild(t);setTimeout(function(){t.remove()},3000)}
+        function hexToRgb(h){return parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16)}
+
+        // MODALS
+        function openGame(g){document.getElementById(g+'Modal').classList.add('active');document.body.style.overflow='hidden';if(g==='snake')resetSnake();if(g==='ludo')resetLudo();playSound('click')}
+        function closeGame(g){document.getElementById(g+'Modal').classList.remove('active');document.body.style.overflow='';if(g==='snake'&&snakeInterval)clearInterval(snakeInterval)}
+
+        // INVENTORY
+        function openInventory(gt){document.getElementById('invTitle').textContent=gt==='snake'?'🐍 snake skins':'🎲 ludo skins';var list=document.getElementById('inventoryList');var types=gt==='snake'?['snake']:['ludo','dice','board'];var my=getAllShopItems().filter(function(x){return types.includes(x.type)&&ownedItems.includes(x.id)});if(my.length===0){list.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:25px;font-family:var(--font-hand)">no skins yet! buy from shop 🛒</p>'}else{var h='';for(var i=0;i<my.length;i++){var it=my[i];var eq=equippedSkins[it.type]===it.id;h+='<div class="inv-item"><div class="inv-item-left"><div class="inv-item-icon" style="background:rgba('+hexToRgb(it.color)+',0.15);border:2px solid '+it.color+'">'+it.emoji+'</div><div class="inv-item-info"><h4>'+it.name+'</h4><span>'+it.desc+'</span></div></div>';h+=eq?'<button class="equip-btn equipped">✅ equipped</button>':'<button class="equip-btn not-equipped" onclick="equipSkin(\''+it.id+'\',\''+it.type+'\')">equip</button>';h+='</div>'}list.innerHTML=h}document.getElementById('inventoryModal').classList.add('active')}
+        function closeInventory(){document.getElementById('inventoryModal').classList.remove('active')}
+        function equipSkin(id,type){equippedSkins[type]=id;localStorage.setItem('gv_equipped',JSON.stringify(equippedSkins));playSound('click');showToast('✨ equipped!','success');openInventory(type==='snake'?'snake':'ludo')}
+        function getSnakeColor(){if(equippedSkins.snake==='default')return'#4ADE80';var it=getAllShopItems().find(function(x){return x.id===equippedSkins.snake});return it?(it.snakeColor||it.color):'#4ADE80'}
+        function getDiceStyle(){if(equippedSkins.dice==='default')return{bg:'var(--bg-card)',border:'var(--border-color)',color:'var(--text-primary)'};var it=getAllShopItems().find(function(x){return x.id===equippedSkins.dice});return it?{bg:'rgba('+hexToRgb(it.color)+',0.15)',border:it.color,color:it.color}:{bg:'var(--bg-card)',border:'var(--border-color)',color:'var(--text-primary)'}}
+
+        // THUMBNAILS
+        function drawSnakeThumb(){var c=document.getElementById('snakeThumb');if(!c)return;var x=c.getContext('2d');x.fillStyle='#0C0C1D';x.fillRect(0,0,400,200);x.strokeStyle='rgba(74,222,128,0.1)';for(var i=0;i<400;i+=20){x.beginPath();x.moveTo(i,0);x.lineTo(i,200);x.stroke()}for(var j=0;j<200;j+=20){x.beginPath();x.moveTo(0,j);x.lineTo(400,j);x.stroke()}var sn=[[200,100],[180,100],[160,100],[140,100],[120,100],[100,100]];for(var k=0;k<sn.length;k++){x.fillStyle='rgba(74,222,128,'+(1-k*.12)+')';x.shadowColor='#4ADE80';x.shadowBlur=k===0?12:4;x.beginPath();x.arc(sn[k][0],sn[k][1],8,0,Math.PI*2);x.fill();x.shadowBlur=0}x.fillStyle='#EF4444';x.shadowColor='#EF4444';x.shadowBlur=12;x.beginPath();x.arc(280,100,6,0,Math.PI*2);x.fill();x.shadowBlur=0}
+        function drawLudoThumb(){var c=document.getElementById('ludoThumb');if(!c)return;var x=c.getContext('2d');x.fillStyle='#0C0C1D';x.fillRect(0,0,400,200);var cl=[['rgba(239,68,68,0.3)','#EF4444'],['rgba(74,222,128,0.3)','#4ADE80'],['rgba(91,155,245,0.3)','#5B9BF5'],['rgba(251,191,36,0.3)','#FBBF24']];var ps=[[80,30],[260,30],[80,120],[260,120]];for(var i=0;i<4;i++){x.fillStyle=cl[i][0];x.fillRect(ps[i][0],ps[i][1],80,60);x.fillStyle=cl[i][1];x.shadowColor=cl[i][1];x.shadowBlur=6;x.beginPath();x.arc(ps[i][0]+25,ps[i][1]+30,7,0,Math.PI*2);x.fill();x.beginPath();x.arc(ps[i][0]+55,ps[i][1]+30,7,0,Math.PI*2);x.fill();x.shadowBlur=0}x.fillStyle='rgba(124,92,252,0.3)';x.fillRect(170,65,55,55);x.font='24px serif';x.fillText('🎲',182,100)}
+                  // ===== SNAKE =====
+        var snakeCanvas,snakeCtx,snakeInterval;
+        var snake,food,snakeDir,snakeNextDir,snakeScore,snakeGameOver,snakeRunning,snakeCoinsThisGame;
+        var SNAKE_SIZE=20,SNAKE_SPEED=120;
+
+        function resetSnake(){snakeCanvas=document.getElementById('snakeCanvas');snakeCtx=snakeCanvas.getContext('2d');if(snakeInterval)clearInterval(snakeInterval);snakeInterval=null;var c=snakeCanvas.width/SNAKE_SIZE,r=snakeCanvas.height/SNAKE_SIZE,sx=Math.floor(c/2),sy=Math.floor(r/2);snake=[{x:sx,y:sy},{x:sx-1,y:sy},{x:sx-2,y:sy}];snakeDir={x:1,y:0};snakeNextDir={x:1,y:0};snakeScore=0;snakeCoinsThisGame=0;snakeGameOver=false;snakeRunning=false;spawnFood();document.getElementById('snakeScore').textContent='0';document.getElementById('snakeCoinsEarned').textContent='0';document.getElementById('snakeEffects').innerHTML='';drawSnakeGame()}
+        function spawnFood(){var c=snakeCanvas.width/SNAKE_SIZE,r=snakeCanvas.height/SNAKE_SIZE;do{food={x:Math.floor(Math.random()*c),y:Math.floor(Math.random()*r)}}while(snake.some(function(s){return s.x===food.x&&s.y===food.y}))}
+        function startSnake(){if(snakeRunning)return;if(snakeGameOver)resetSnake();snakeRunning=true;snakeInterval=setInterval(updateSnake,SNAKE_SPEED);playSound('click')}
+        function setSnakeDir(dx,dy){if(dx===1&&snakeDir.x===-1)return;if(dx===-1&&snakeDir.x===1)return;if(dy===1&&snakeDir.y===-1)return;if(dy===-1&&snakeDir.y===1)return;snakeNextDir={x:dx,y:dy}}
+        document.addEventListener('keydown',function(e){if(!document.getElementById('snakeModal').classList.contains('active'))return;switch(e.key){case'ArrowUp':case'w':case'W':setSnakeDir(0,-1);e.preventDefault();break;case'ArrowDown':case's':case'S':setSnakeDir(0,1);e.preventDefault();break;case'ArrowLeft':case'a':case'A':setSnakeDir(-1,0);e.preventDefault();break;case'ArrowRight':case'd':case'D':setSnakeDir(1,0);e.preventDefault();break}});
+
+        function spawnFoodEffect(fx,fy){
+            var ef=document.getElementById('snakeEffects');
+            var sc=getSnakeColor();
+            for(var i=0;i<8;i++){
+                var p=document.createElement('div');
+                p.className='snake-food-particle';
+                var angle=Math.random()*Math.PI*2;
+                var dist=20+Math.random()*30;
+                p.style.cssText='left:'+(fx*SNAKE_SIZE+SNAKE_SIZE/2)+'px;top:'+(fy*SNAKE_SIZE+SNAKE_SIZE/2)+'px;background:'+sc+';--tx:'+(Math.cos(angle)*dist)+'px;--ty:'+(Math.sin(angle)*dist)+'px;';
+                ef.appendChild(p);
+                setTimeout(function(el){el.remove()}.bind(null,p),500);
+            }
+        }
+
+        function updateSnake(){if(snakeGameOver)return;snakeDir=snakeNextDir;var head={x:snake[0].x+snakeDir.x,y:snake[0].y+snakeDir.y};var c=snakeCanvas.width/SNAKE_SIZE,r=snakeCanvas.height/SNAKE_SIZE;if(head.x<0||head.x>=c||head.y<0||head.y>=r){gameOverSnake();return}if(snake.some(function(s){return s.x===head.x&&s.y===head.y})){gameOverSnake();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){snakeScore++;snakeCoinsThisGame++;addCoins(1);playSound('eat');spawnFoodEffect(food.x,food.y);document.getElementById('snakeScore').textContent=snakeScore;document.getElementById('snakeCoinsEarned').textContent=snakeCoinsThisGame;spawnFood()}else snake.pop();drawSnakeGame()}
+
+        function gameOverSnake(){snakeGameOver=true;snakeRunning=false;clearInterval(snakeInterval);snakeInterval=null;playSound('die');if(snakeScore>snakeBest){snakeBest=snakeScore;localStorage.setItem('gv_snake_best',snakeBest);document.getElementById('snakeBest').textContent=snakeBest}drawSnakeGame();var x=snakeCtx;x.fillStyle='rgba(0,0,0,0.75)';x.fillRect(0,0,snakeCanvas.width,snakeCanvas.height);x.font='bold 28px Quicksand';x.fillStyle='#EF4444';x.textAlign='center';x.fillText('GAME OVER',snakeCanvas.width/2,snakeCanvas.height/2-22);x.font='16px Kalam';x.fillStyle='#FBBF24';x.fillText('score: '+snakeScore+' | earned: '+snakeCoinsThisGame+' 🪙',snakeCanvas.width/2,snakeCanvas.height/2+10);x.fillStyle='#B0B0CC';x.font='14px Kalam';x.fillText('press PLAY again ~',snakeCanvas.width/2,snakeCanvas.height/2+40);x.textAlign='start';if(snakeCoinsThisGame>0)showToast('🐍 earned '+snakeCoinsThisGame+' 🪙','gold')}
+
+        function drawSnakeGame(){var x=snakeCtx,w=snakeCanvas.width,h=snakeCanvas.height,sc=getSnakeColor();
+            // Board skin
+            var boardBg='#08081A';var boardGrid='rgba(255,255,255,0.03)';
+            if(equippedSkins.board!=='default'){var bi=getAllShopItems().find(function(it){return it.id===equippedSkins.board});if(bi){var rgb=hexToRgb(bi.color);boardBg='rgba('+rgb+',0.08)';boardGrid='rgba('+rgb+',0.08)'}}
+            x.fillStyle=boardBg;x.fillRect(0,0,w,h);x.strokeStyle=boardGrid;x.lineWidth=.5;
+            for(var i=0;i<w;i+=SNAKE_SIZE){x.beginPath();x.moveTo(i,0);x.lineTo(i,h);x.stroke()}
+            for(var j=0;j<h;j+=SNAKE_SIZE){x.beginPath();x.moveTo(0,j);x.lineTo(w,j);x.stroke()}
+            // Food with glow
+            x.fillStyle='#EF4444';x.shadowColor='#EF4444';x.shadowBlur=15;
+            x.beginPath();x.arc(food.x*SNAKE_SIZE+SNAKE_SIZE/2,food.y*SNAKE_SIZE+SNAKE_SIZE/2,SNAKE_SIZE/2-2,0,Math.PI*2);x.fill();x.shadowBlur=0;
+            // Snake with skin
+            for(var k=0;k<snake.length;k++){var s=snake[k],a=1-(k*.03);if(a<.3)a=.3;var r=parseInt(sc.slice(1,3),16),g=parseInt(sc.slice(3,5),16),b=parseInt(sc.slice(5,7),16);
+                if(k===0){x.fillStyle=sc;x.shadowColor=sc;x.shadowBlur=12}
+                else{x.fillStyle='rgba('+r+','+g+','+b+','+a+')';x.shadowBlur=0}
+                x.fillRect(s.x*SNAKE_SIZE+1,s.y*SNAKE_SIZE+1,SNAKE_SIZE-2,SNAKE_SIZE-2);x.shadowBlur=0;
+                // Eye on head
+                if(k===0){x.fillStyle='white';x.beginPath();x.arc(s.x*SNAKE_SIZE+SNAKE_SIZE/2+(snakeDir.x*3),s.y*SNAKE_SIZE+SNAKE_SIZE/2+(snakeDir.y*3),3,0,Math.PI*2);x.fill();x.fillStyle='#000';x.beginPath();x.arc(s.x*SNAKE_SIZE+SNAKE_SIZE/2+(snakeDir.x*4),s.y*SNAKE_SIZE+SNAKE_SIZE/2+(snakeDir.y*4),1.5,0,Math.PI*2);x.fill()}
+            }
+              }
+                  // ===== LUDO =====
+        var ludoState,ludoDiceValue,ludoRolling,ludoGameOver;
+        var LUDO_HEX={'red':'#EF4444','green':'#4ADE80','blue':'#5B9BF5','yellow':'#FBBF24'};
+        var ludoCoinsThisGame=0;
+
+        function resetLudo(){ludoDiceValue=0;ludoRolling=false;ludoGameOver=false;ludoCoinsThisGame=0;ludoState={currentPlayer:0,players:[{color:'red',name:'You',pieces:[{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false}],isAI:false,startPos:0,homeCount:0},{color:'green',name:'AI Green',pieces:[{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false}],isAI:true,startPos:13,homeCount:0},{color:'blue',name:'AI Blue',pieces:[{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false}],isAI:true,startPos:26,homeCount:0},{color:'yellow',name:'AI Yellow',pieces:[{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false},{pos:-1,home:false}],isAI:true,startPos:39,homeCount:0}]};document.getElementById('ludoPlayerScore').textContent='0/4';document.getElementById('ludoCoinsEarned').textContent='0';var d=document.getElementById('ludoDice'),ds=getDiceStyle();d.textContent='🎲';d.style.background=ds.bg;d.style.borderColor=ds.border;d.style.color=ds.color;document.getElementById('ludoMessage').textContent='tap dice ~';updateLudoTurn();drawLudoBoard()}
+
+        function rollLudoDice(){if(ludoRolling||ludoGameOver)return;if(ludoState.players[ludoState.currentPlayer].isAI)return;ludoRolling=true;playSound('dice');var d=document.getElementById('ludoDice');d.classList.add('rolling');var n=0,ri=setInterval(function(){d.textContent=Math.floor(Math.random()*6)+1;n++;if(n>=10){clearInterval(ri);ludoDiceValue=Math.floor(Math.random()*6)+1;d.textContent=ludoDiceValue;d.classList.remove('rolling');ludoRolling=false;handleLudoTurn(ludoState.currentPlayer,ludoDiceValue)}},80)}
+        function handleLudoTurn(pi,dv){var p=ludoState.players[pi];var mv=[];for(var i=0;i<4;i++){var pc=p.pieces[i];if(pc.home)continue;if(pc.pos===-1&&dv===6){mv.push(i);continue}if(pc.pos!==-1){var st=getSt(p,pc.pos);if(st+dv<=56)mv.push(i)}}if(mv.length===0){document.getElementById('ludoMessage').textContent=p.name+' — no moves';setTimeout(nextLudoTurn,800);return}if(p.isAI){moveLudoPiece(pi,mv[Math.floor(Math.random()*mv.length)],dv)}else{document.getElementById('ludoMessage').textContent='tap piece (rolled '+dv+')';window._lm=mv;window._ld=dv;window._lp=pi;drawLudoBoard(mv)}}
+        function getSt(p,pos){if(pos===-1)return 0;var d=pos-p.startPos;if(d<0)d+=52;return d}
+        function ludoPieceClicked(i){if(!window._lm||!window._lm.includes(i))return;playSound('click');moveLudoPiece(window._lp,i,window._ld);window._lm=null}
+        function moveLudoPiece(pi,qi,dv){var p=ludoState.players[pi],pc=p.pieces[qi];if(pc.pos===-1&&dv===6){pc.pos=p.startPos;playSound('click')}else if(pc.pos!==-1){var st=getSt(p,pc.pos);if(st+dv>=51){pc.home=true;pc.pos=-2;p.homeCount++;playSound('home');if(pi===0){document.getElementById('ludoPlayerScore').textContent=p.homeCount+'/4';addCoins(5);ludoCoinsThisGame+=5;document.getElementById('ludoCoinsEarned').textContent=ludoCoinsThisGame;showToast('🏠 home! +5 🪙','gold')}}else{pc.pos=(pc.pos+dv)%52;for(var op=0;op<4;op++){if(op===pi)continue;var opp=ludoState.players[op];for(var oq=0;oq<4;oq++){if(opp.pieces[oq].pos===pc.pos&&!opp.pieces[oq].home){opp.pieces[oq].pos=-1;playSound('capture');if(pi===0){addCoins(3);ludoCoinsThisGame+=3;document.getElementById('ludoCoinsEarned').textContent=ludoCoinsThisGame}}}}}}if(p.homeCount>=4){ludoGameOver=true;if(pi===0){addCoins(25);ludoCoinsThisGame+=25;document.getElementById('ludoCoinsEarned').textContent=ludoCoinsThisGame;playSound('win');showToast('🎉 YOU WIN! +25 🪙!','gold')}else showToast(p.name+' won!','info');drawLudoBoard();return}drawLudoBoard();if(dv===6){if(p.isAI)setTimeout(function(){aiRoll(pi)},1000);return}setTimeout(nextLudoTurn,p.isAI?600:300)}
+        function nextLudoTurn(){if(ludoGameOver)return;ludoState.currentPlayer=(ludoState.currentPlayer+1)%4;updateLudoTurn();if(ludoState.players[ludoState.currentPlayer].isAI)setTimeout(function(){aiRoll(ludoState.currentPlayer)},800)}
+        function aiRoll(pi){if(ludoGameOver)return;playSound('dice');ludoDiceValue=Math.floor(Math.random()*6)+1;document.getElementById('ludoDice').textContent=ludoDiceValue;handleLudoTurn(pi,ludoDiceValue)}
+        function updateLudoTurn(){var p=ludoState.players[ludoState.currentPlayer],i=document.getElementById('ludoTurnIndicator');i.textContent=p.isAI?p.name+'\'s turn':'your turn';i.style.background='rgba('+hexToRgb(LUDO_HEX[p.color])+',0.2)';i.style.color=LUDO_HEX[p.color]}
+
+        function drawLudoBoard(hl){var ct=document.getElementById('ludoBoardContainer'),cs=window.innerWidth<500?19:30;
+            // Board skin color
+            var boardTint='';if(equippedSkins.board!=='default'){var bi=getAllShopItems().find(function(it){return it.id===equippedSkins.board});if(bi)boardTint=bi.color}
+            var h='<div style="display:grid;grid-template-columns:repeat(15,'+cs+'px);grid-template-rows:repeat(15,'+cs+'px);width:'+(cs*15)+'px;margin:0 auto;border:2px solid var(--border-color);border-radius:8px;overflow:hidden">';
+            for(var r=0;r<15;r++){for(var c=0;c<15;c++){var bg='rgba(255,255,255,0.02)',cn='';
+                if(r<6&&c<6)bg='rgba(239,68,68,0.15)';if(r<6&&c>8)bg='rgba(74,222,128,0.15)';
+                if(r>8&&c<6)bg='rgba(91,155,245,0.15)';if(r>8&&c>8)bg='rgba(251,191,36,0.15)';
+                if(r>=6&&r<=8&&c>=6&&c<=8)bg=boardTint?'rgba('+hexToRgb(boardTint)+',0.2)':'rgba(124,92,252,0.15)';
+                if((r===6&&c<=5)||(r===8&&c>=9)||(c===6&&r>=9)||(c===8&&r<=5))bg='rgba(255,255,255,0.05)';
+                if(r===7&&(c<6||c>8))bg='rgba(255,255,255,0.05)';if(c===7&&(r<6||r>8))bg='rgba(255,255,255,0.05)';
+                for(var p=0;p<4;p++){var pl=ludoState.players[p];for(var q=0;q<4;q++){var pc=pl.pieces[q];if(pc.home||pc.pos===-1)continue;var co=getPieceCoord(pc.pos);if(co.row===r&&co.col===c){var ih=hl&&p===0&&hl.includes(q),gl=ih?'box-shadow:0 0 10px '+LUDO_HEX[pl.color]+';cursor:pointer;transform:scale(1.3);':'';cn='<div style="width:'+(cs*.7)+'px;height:'+(cs*.7)+'px;border-radius:50%;background:'+LUDO_HEX[pl.color]+';border:2px solid white;margin:auto;'+gl+'" onclick="ludoPieceClicked('+q+')"></div>'}}}
+                var hp=[[{r:1,c:1},{r:1,c:4},{r:4,c:1},{r:4,c:4}],[{r:1,c:10},{r:1,c:13},{r:4,c:10},{r:4,c:13}],[{r:10,c:1},{r:10,c:4},{r:13,c:1},{r:13,c:4}],[{r:10,c:10},{r:10,c:13},{r:13,c:10},{r:13,c:13}]];
+                for(var p2=0;p2<4;p2++){var pl2=ludoState.players[p2],hi=0;for(var q2=0;q2<4;q2++){if(pl2.pieces[q2].pos===-1&&!pl2.pieces[q2].home){if(hi<4){var hpos=hp[p2][hi];if(hpos.r===r&&hpos.c===c){var ih2=hl&&p2===0&&hl.includes(q2),gl2=ih2?'box-shadow:0 0 10px '+LUDO_HEX[pl2.color]+';cursor:pointer;transform:scale(1.3);':'';cn='<div style="width:'+(cs*.6)+'px;height:'+(cs*.6)+'px;border-radius:50%;background:'+LUDO_HEX[pl2.color]+';border:2px solid rgba(255,255,255,.5);margin:auto;opacity:.7;'+gl2+'" onclick="ludoPieceClicked('+q2+')"></div>'}hi++}}}}
+                h+='<div style="width:'+cs+'px;height:'+cs+'px;background:'+bg+';border:.5px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center">'+cn+'</div>'}}
+            h+='</div>';ct.innerHTML=h}
+
+        function getPieceCoord(pos){var coords=[{row:6,col:0},{row:6,col:1},{row:6,col:2},{row:6,col:3},{row:6,col:4},{row:6,col:5},{row:5,col:6},{row:4,col:6},{row:3,col:6},{row:2,col:6},{row:1,col:6},{row:0,col:6},{row:0,col:7},{row:0,col:8},{row:1,col:8},{row:2,col:8},{row:3,col:8},{row:4,col:8},{row:5,col:8},{row:6,col:8},{row:6,col:9},{row:6,col:10},{row:6,col:11},{row:6,col:12},{row:6,col:13},{row:6,col:14},{row:7,col:14},{row:8,col:14},{row:8,col:13},{row:8,col:12},{row:8,col:11},{row:8,col:10},{row:8,col:9},{row:8,col:8},{row:9,col:8},{row:10,col:8},{row:11,col:8},{row:12,col:8},{row:13,col:8},{row:14,col:8},{row:14,col:7},{row:14,col:6},{row:13,col:6},{row:12,col:6},{row:11,col:6},{row:10,col:6},{row:9,col:6},{row:8,col:6},{row:8,col:5},{row:8,col:4},{row:8,col:3},{row:8,col:2},{row:8,col:1},{row:8,col:0},{row:7,col:0},{row:7,col:1}];return pos>=0&&pos<coords.length?coords[pos]:{row:7,col:7}}
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 GameVault Shop — Buy Skins</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--primary:#7C5CFC;--primary-light:#A78BFA;--secondary:#E8567F;--accent:#3ECFB2;--neon-green:#4ADE80;--warm-yellow:#FBBF24;--warm-orange:#FB923C;--bg-dark:#0C0C1D;--bg-darker:#08081A;--bg-card:#151530;--text-primary:#F1F1F8;--text-secondary:#B0B0CC;--text-muted:#6B6B8D;--border-color:#2A2A50;--success:#10B981;--danger:#EF4444;--gradient-main:linear-gradient(135deg,#7C5CFC 0%,#E8567F 100%);--gradient-gold:linear-gradient(135deg,#FBBF24 0%,#FB923C 100%);--shadow-glow:0 0 40px rgba(124,92,252,0.15);--font-heading:'Quicksand',sans-serif;--font-body:'Nunito',sans-serif;--font-hand:'Kalam',cursive;--font-accent:'Caveat',cursive}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:var(--font-body);background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.7;font-size:17px}
+        .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;background:radial-gradient(ellipse at 20% 50%,rgba(124,92,252,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(232,86,127,0.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(62,207,178,0.05) 0%,transparent 50%),var(--bg-dark)}
+        .bg-animation .particle{position:absolute;border-radius:50%;animation:floatP linear infinite;opacity:.1;filter:blur(1px)}
+        .bg-animation .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle ease-in-out infinite}
+        @keyframes floatP{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.1;transform:translateY(90vh) scale(1)}90%{opacity:.1}100%{transform:translateY(-10vh) rotate(720deg) scale(0);opacity:0}}
+        @keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.5)}}
+        .ambient-orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.06;animation:orbF 20s ease-in-out infinite;pointer-events:none;z-index:-1}
+        .ambient-orb:nth-child(1){width:400px;height:400px;background:var(--primary);top:10%;left:-5%;animation-duration:25s}
+        .ambient-orb:nth-child(2){width:350px;height:350px;background:var(--secondary);top:60%;right:-5%;animation-duration:30s;animation-delay:-5s}
+        .ambient-orb:nth-child(3){width:300px;height:300px;background:var(--accent);bottom:10%;left:30%;animation-duration:22s;animation-delay:-10s}
+        @keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-darker)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:10px}
+
+        .navbar{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:14px 30px;display:flex;justify-content:space-between;align-items:center;background:rgba(12,12,29,0.85);backdrop-filter:blur(25px);border-bottom:1px solid rgba(124,92,252,0.1);transition:all .4s ease}
+        .navbar.scrolled{padding:10px 30px;background:rgba(12,12,29,0.95);box-shadow:0 5px 30px rgba(0,0,0,0.3)}
+        .nav-logo{font-family:var(--font-accent);font-size:2.2rem;font-weight:700;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;text-decoration:none}
+        .nav-links{display:flex;list-style:none;gap:22px;align-items:center}
+        .nav-links a{text-decoration:none;color:var(--text-secondary);font-weight:700;font-size:.95rem;font-family:var(--font-heading);transition:all .3s ease;padding:5px 0;position:relative}
+        .nav-links a:hover{color:var(--primary-light)}
+        .nav-links a.active{color:var(--primary-light)}
+        .coin-bar-nav{display:flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:50px;text-decoration:none}
+        .coin-bar-nav .coin-icon{font-size:1rem}.coin-bar-nav .coin-amount{font-family:var(--font-heading);font-weight:800;color:var(--warm-yellow);font-size:.95rem}
+        .coin-bar-nav .coin-level{font-size:.7rem;color:var(--warm-orange);font-family:var(--font-hand)}
+        .hamburger{display:none;flex-direction:column;cursor:pointer;gap:5px;padding:5px}
+        .hamburger span{width:26px;height:3px;background:var(--text-primary);border-radius:5px}
+        .mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100vh;background:rgba(8,8,26,0.98);z-index:999;flex-direction:column;justify-content:center;align-items:center;gap:25px}
+        .mobile-menu.active{display:flex}
+        .mobile-menu a{font-size:1.3rem;text-decoration:none;color:var(--text-primary);font-weight:700;font-family:var(--font-heading)}
+        .mobile-menu .close-btn{position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:var(--text-primary);background:none;border:none}
+
+        .btn{padding:14px 32px;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:9px;border:none;font-family:var(--font-heading)}
+        .btn-primary{background:var(--gradient-main);color:white;box-shadow:0 4px 20px rgba(124,92,252,0.35)}
+        .btn-primary:hover{transform:translateY(-3px)}
+        .btn-gold{background:var(--gradient-gold);color:#1a1a1a;box-shadow:0 4px 20px rgba(251,191,36,0.3)}
+        .btn-gold:hover{transform:translateY(-3px)}
+        .btn-secondary{background:rgba(255,255,255,0.05);color:var(--text-primary);border:1.5px solid var(--border-color)}
+        .btn-secondary:hover{border-color:var(--primary);transform:translateY(-3px)}
+        .btn-small{padding:8px 18px;font-size:.85rem;border-radius:10px}
+
+        .section{padding:85px 28px;max-width:1200px;margin:0 auto}
+        .section-header{text-align:center;margin-bottom:45px}
+        .section-header .tag{display:inline-block;padding:7px 20px;background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.2);border-radius:50px;font-size:.85rem;font-family:var(--font-hand);color:var(--primary-light);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+        .section-header h2{font-family:var(--font-heading);font-size:2.4rem;font-weight:800;margin-bottom:10px}
+        .section-header p{color:var(--text-secondary);font-size:1.05rem;max-width:550px;margin:0 auto;font-family:var(--font-hand)}
+        .section-divider{width:60px;height:4px;background:var(--gradient-main);border-radius:4px;margin:0 auto 16px}
+
+        .coin-display{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:25px 28px;margin-bottom:35px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+        .coin-left{display:flex;align-items:center;gap:14px}
+        .coin-big-icon{font-size:2.5rem}
+        .coin-info h3{font-family:var(--font-heading);font-weight:800;font-size:1.5rem;color:var(--warm-yellow)}
+        .coin-info .coin-subtitle{font-family:var(--font-hand);color:var(--text-muted);font-size:.9rem}
+        .coin-progress-container{flex:1;min-width:180px;max-width:380px}
+        .coin-progress-label{display:flex;justify-content:space-between;font-size:.82rem;font-family:var(--font-hand);color:var(--text-muted);margin-bottom:5px}
+        .coin-progress-bar{width:100%;height:13px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;border:1px solid var(--border-color)}
+        .coin-progress-fill{height:100%;background:var(--gradient-gold);border-radius:10px;transition:width .6s ease}
+
+        .shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
+        .shop-item{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:25px;text-align:center;transition:all .4s ease}
+        .shop-item:hover{transform:translateY(-5px);border-color:rgba(124,92,252,0.3);box-shadow:var(--shadow-glow)}
+        .shop-item.owned{border-color:rgba(16,185,129,0.4)}
+        .shop-item .item-preview{width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+        .shop-item h4{font-family:var(--font-heading);font-weight:700;font-size:1.05rem;margin-bottom:7px}
+        .shop-item .item-desc{font-family:var(--font-hand);color:var(--text-muted);font-size:.88rem;margin-bottom:14px}
+        .shop-item .item-price{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:50px;font-family:var(--font-heading);font-weight:700;color:var(--warm-yellow);font-size:.9rem;margin-bottom:14px}
+        .shop-item .owned-badge{display:inline-block;padding:5px 14px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:50px;font-family:var(--font-heading);font-weight:700;color:var(--success);font-size:.82rem}
+
+        .redeem-container{background:var(--bg-card);border:1px solid var(--border-color);border-radius:22px;padding:40px;text-align:center;max-width:500px;margin:0 auto}
+        .redeem-container h3{font-family:var(--font-heading);font-weight:800;font-size:1.3rem;margin-bottom:10px}
+        .redeem-container .redeem-sub{font-family:var(--font-hand);color:var(--text-muted);margin-bottom:22px}
+        .redeem-input-group{display:flex;gap:10px;max-width:360px;margin:0 auto}
+        .redeem-input-group input{flex:1;padding:13px 18px;background:rgba(255,255,255,0.04);border:1.5px solid var(--border-color);border-radius:14px;color:var(--text-primary);font-size:1rem;font-family:var(--font-body);outline:none}
+        .redeem-input-group input:focus{border-color:var(--primary)}
+
+        .inv-section{background:var(--bg-card);border:1px solid var(--border-color);border-radius:22px;padding:30px;margin-top:30px}
+        .inv-section h3{font-family:var(--font-heading);font-weight:800;font-size:1.2rem;margin-bottom:18px}
+        .inv-item{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid rgba(42,42,80,0.4);border-radius:12px;gap:12px}
+        .inv-item:hover{background:rgba(124,92,252,0.05)}
+        .inv-item-left{display:flex;align-items:center;gap:12px}
+        .inv-item-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+        .inv-item-info h4{font-family:var(--font-heading);font-weight:700;font-size:.95rem}
+        .inv-item-info span{font-family:var(--font-hand);font-size:.82rem;color:var(--text-muted)}
+        .equip-btn{padding:5px 14px;border-radius:10px;font-family:var(--font-heading);font-weight:700;font-size:.8rem;cursor:pointer;border:none}
+        .equip-btn.equipped{background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.3)}
+        .equip-btn.not-equipped{background:var(--gradient-main);color:white}
+
+        .levelup-popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:7000;justify-content:center;align-items:center;backdrop-filter:blur(12px)}
+        .levelup-popup.active{display:flex}
+        .levelup-box{background:var(--bg-card);border:2px solid var(--primary);border-radius:28px;padding:45px;max-width:430px;width:92%;text-align:center;box-shadow:0 0 80px rgba(124,92,252,0.3);animation:lvlAnim .6s ease;position:relative}
+        @keyframes lvlAnim{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+        .levelup-box .lvl-icon{font-size:4.5rem;margin-bottom:12px}
+        .levelup-box h2{font-family:var(--font-heading);font-size:1.7rem;font-weight:900;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .levelup-box .lvl-name{font-family:var(--font-accent);font-size:1.8rem;color:var(--warm-yellow);margin:8px 0}
+        .levelup-box .lvl-reward{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;color:var(--neon-green);margin-bottom:15px}
+        .lvl-particles{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;border-radius:28px}
+        .lvl-particles .lp{position:absolute;width:8px;height:8px;border-radius:50%;animation:lpF 2s ease-out forwards}
+        @keyframes lpF{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-200px) scale(0)}}
+
+        .toast-container{position:fixed;top:76px;right:18px;z-index:8000;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:13px 22px;border-radius:12px;font-size:.9rem;font-family:var(--font-hand);display:flex;align-items:center;gap:8px;animation:slideIn .4s ease,fadeOut .4s ease 2.6s both;min-width:250px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+        .toast.success{background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.3);color:var(--success)}
+        .toast.error{background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.3);color:var(--danger)}
+        .toast.gold{background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.3);color:var(--warm-yellow)}
+        .toast.info{background:rgba(124,92,252,0.2);border:1px solid rgba(124,92,252,0.3);color:var(--primary-light)}
+        @keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes fadeOut{to{opacity:0;transform:translateX(120%)}}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+        .footer{background:var(--bg-card);border-top:1px solid var(--border-color);padding:35px 28px 22px;text-align:center}
+        .footer p{color:var(--text-muted);font-family:var(--font-hand);font-size:.95rem}
+        .footer a{color:var(--primary-light);text-decoration:none}
+
+        @media(max-width:768px){.navbar{padding:12px 14px}.nav-links{display:none}.hamburger{display:flex}.section{padding:55px 14px}.section-header h2{font-size:1.8rem}.shop-grid{grid-template-columns:1fr 1fr}.coin-display{flex-direction:column;text-align:center}.redeem-input-group{flex-direction:column}}
+        @media(max-width:480px){.shop-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+    <script>
+        var coins=parseInt(localStorage.getItem('gv_coins'))||0;
+        var ownedItems=JSON.parse(localStorage.getItem('gv_owned'))||[];
+        var equippedSkins=JSON.parse(localStorage.getItem('gv_equipped'))||{snake:'default',ludo:'default',dice:'default',board:'default'};
+        var redeemedCodes=JSON.parse(localStorage.getItem('gv_redeemed'))||[];
+        var customSkins=JSON.parse(localStorage.getItem('gv_custom_skins'))||[];
+        var savedTheme=JSON.parse(localStorage.getItem('gv_theme'))||null;
+        var previousLevel=0;
+        var LEVELS=[{name:'newbie',min:0,max:100,reward:0},{name:'casual',min:100,max:300,reward:50},{name:'rising star',min:300,max:600,reward:75},{name:'pro',min:600,max:1000,reward:100},{name:'elite',min:1000,max:2000,reward:150},{name:'legendary',min:2000,max:5000,reward:250},{name:'god tier',min:5000,max:99999,reward:500}];
+        var BASE_SHOP=[{id:'snake_neon',type:'snake',name:'Neon Snake',desc:'neon cyan ✨',price:50,emoji:'🐍',color:'#22D3EE',snakeColor:'#22D3EE'},{id:'snake_fire',type:'snake',name:'Fire Snake',desc:'fire 🔥',price:100,emoji:'🔥',color:'#EF4444',snakeColor:'#EF4444'},{id:'snake_galaxy',type:'snake',name:'Galaxy Snake',desc:'galaxy 🌌',price:200,emoji:'🌌',color:'#8B5CF6',snakeColor:'#8B5CF6'},{id:'snake_gold',type:'snake',name:'Gold Snake',desc:'gold 👑',price:500,emoji:'👑',color:'#FBBF24',snakeColor:'#FBBF24'},{id:'ludo_crystal',type:'ludo',name:'Crystal',desc:'crystal 💎',price:75,emoji:'💎',color:'#06B6D4'},{id:'ludo_flame',type:'ludo',name:'Flame',desc:'flame 🔥',price:150,emoji:'🔥',color:'#F43F5E'},{id:'ludo_royal',type:'ludo',name:'Royal',desc:'royal 👑',price:300,emoji:'👑',color:'#FBBF24'},{id:'ludo_shadow',type:'ludo',name:'Shadow',desc:'shadow 🌑',price:250,emoji:'🌑',color:'#6366F1'},{id:'dice_rainbow',type:'dice',name:'Rainbow Dice',desc:'rainbow 🌈',price:100,emoji:'🌈',color:'#EC4899'},{id:'dice_skull',type:'dice',name:'Skull Dice',desc:'skull 💀',price:175,emoji:'💀',color:'#EF4444'},{id:'board_space',type:'board',name:'Space Board',desc:'space 🚀',price:400,emoji:'🚀',color:'#3B82F6'},{id:'board_forest',type:'board',name:'Forest Board',desc:'forest 🌲',price:350,emoji:'🌲',color:'#10B981'}];
+        function getAllShopItems(){return BASE_SHOP.concat(customSkins)}
+        function hexToRgb(h){return parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16)}
+
+        // SOUND
+        var audioCtx=null;
+        function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)()}
+        function playSound(t){try{initAudio();var o=audioCtx.createOscillator(),g=audioCtx.createGain(),c=audioCtx.currentTime;o.connect(g);g.connect(audioCtx.destination);switch(t){case'buy':o.type='sine';o.frequency.setValueAtTime(800,c);o.frequency.linearRampToValueAtTime(1200,c+.15);g.gain.setValueAtTime(.12,c);g.gain.linearRampToValueAtTime(0,c+.2);o.start();o.stop(c+.2);break;case'coin':o.type='sine';o.frequency.setValueAtTime(1200,c);o.frequency.linearRampToValueAtTime(1800,c+.08);g.gain.setValueAtTime(.1,c);g.gain.linearRampToValueAtTime(0,c+.12);o.start();o.stop(c+.12);break;case'error':o.type='square';o.frequency.setValueAtTime(200,c);g.gain.setValueAtTime(.08,c);g.gain.linearRampToValueAtTime(0,c+.2);o.start();o.stop(c+.2);break;case'click':o.type='sine';o.frequency.setValueAtTime(800,c);g.gain.setValueAtTime(.05,c);g.gain.linearRampToValueAtTime(0,c+.05);o.start();o.stop(c+.05);break;case'win':case'levelup':var f=[523,659,784,1047],d=[.12,.12,.12,.25],ti=c;for(var i=0;i<f.length;i++){var oo=audioCtx.createOscillator(),gg=audioCtx.createGain();oo.connect(gg);gg.connect(audioCtx.destination);oo.type='sine';oo.frequency.setValueAtTime(f[i],ti);gg.gain.setValueAtTime(.12,ti);gg.gain.linearRampToValueAtTime(0,ti+d[i]);oo.start(ti);oo.stop(ti+d[i]);ti+=d[i]}break;default:o.type='sine';o.frequency.setValueAtTime(440,c);g.gain.setValueAtTime(.08,c);g.gain.linearRampToValueAtTime(0,c+.1);o.start();o.stop(c+.1)}}catch(e){}}
+
+        // INIT
+        document.addEventListener('DOMContentLoaded',function(){
+            createBg();previousLevel=getLevel().level;updateCoinDisplay();renderShop();renderInventory();
+            if(savedTheme)applySavedTheme();
+            if(location.hash==='#redeem')document.getElementById('redeem').scrollIntoView({behavior:'smooth'});
+            if(location.hash==='#inventory')document.getElementById('inventory').scrollIntoView({behavior:'smooth'});
+        });
+        function createBg(){var c=document.getElementById('bgAnimation');if(!c)return;var cl=['#7C5CFC','#E8567F','#3ECFB2','#5B9BF5','#FBBF24'];for(var i=0;i<20;i++){var p=document.createElement('div');p.className='particle';var s=Math.random()*6+2;p.style.cssText='width:'+s+'px;height:'+s+'px;background:'+cl[Math.floor(Math.random()*cl.length)]+';left:'+Math.random()*100+'%;animation-duration:'+(Math.random()*18+12)+'s;animation-delay:'+(Math.random()*12)+'s;';c.appendChild(p)}for(var j=0;j<50;j++){var st=document.createElement('div');st.className='star';st.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-duration:'+(Math.random()*3+2)+'s;animation-delay:'+(Math.random()*5)+'s;';c.appendChild(st)}}
+        window.addEventListener('scroll',function(){var n=document.getElementById('navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50)});
+        function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('active')}
+        function applySavedTheme(){if(!savedTheme)return;var r=document.documentElement;r.style.setProperty('--primary',savedTheme.primary);r.style.setProperty('--secondary',savedTheme.secondary);r.style.setProperty('--accent',savedTheme.accent);r.style.setProperty('--bg-dark',savedTheme.bg);r.style.setProperty('--bg-card',savedTheme.card);r.style.setProperty('--text-primary',savedTheme.text)}
+        function showToast(msg,type){type=type||'success';var c=document.getElementById('toastContainer');var t=document.createElement('div');t.className='toast '+type;var ic={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',gold:'fa-coins'};t.innerHTML='<i class="fas '+(ic[type]||'fa-info-circle')+'"></i> '+msg;c.appendChild(t);setTimeout(function(){t.remove()},3000)}
+
+        // COINS
+        function getLevel(){for(var i=LEVELS.length-1;i>=0;i--)if(coins>=LEVELS[i].min)return{level:i+1,data:LEVELS[i]};return{level:1,data:LEVELS[0]}}
+        function addCoins(a){coins+=a;if(coins<0)coins=0;localStorage.setItem('gv_coins',coins);updateCoinDisplay();checkLevelUp()}
+        function updateCoinDisplay(){var l=getLevel();document.getElementById('navCoins').textContent=coins;document.getElementById('navLevel').textContent='Lv.'+l.level;document.getElementById('mainCoinDisplay').textContent=coins+' coins';document.getElementById('coinLevelText').textContent='level '+l.level+' — '+l.data.name;document.getElementById('currentLevelLabel').textContent='Lv.'+l.level;var nl=l.level<LEVELS.length?LEVELS[l.level]:LEVELS[LEVELS.length-1];document.getElementById('nextLevelLabel').textContent='Lv.'+(l.level+1)+' ('+nl.min+')';var pr=((coins-l.data.min)/(l.data.max-l.data.min))*100;if(pr>100)pr=100;if(pr<0)pr=0;document.getElementById('coinProgressFill').style.width=pr+'%'}
+        function checkLevelUp(){var nl=getLevel().level;if(nl>previousLevel&&previousLevel>0){var ld=LEVELS[nl-1];playSound('levelup');document.getElementById('lvlUpName').textContent=ld.name;document.getElementById('lvlUpReward').textContent='+'+ld.reward+' 🪙';var pc=document.getElementById('lvlParticles');pc.innerHTML='';var cl=['#7C5CFC','#E8567F','#FBBF24','#4ADE80'];for(var i=0;i<25;i++){var d=document.createElement('div');d.className='lp';d.style.cssText='left:'+Math.random()*100+'%;bottom:0;background:'+cl[Math.floor(Math.random()*cl.length)]+';animation-delay:'+(Math.random()*.5)+'s;';pc.appendChild(d)}document.getElementById('levelupPopup').classList.add('active');coins+=ld.reward;localStorage.setItem('gv_coins',coins);updateCoinDisplay()}previousLevel=nl}
+        function closeLevelUp(){document.getElementById('levelupPopup').classList.remove('active')}
+
+        // SHOP
+        function renderShop(){var items=getAllShopItems();var grid=document.getElementById('shopGrid');var h='';for(var i=0;i<items.length;i++){var it=items[i];var ow=ownedItems.includes(it.id);h+='<div class="shop-item '+(ow?'owned':'')+'"><div class="item-preview" style="background:rgba('+hexToRgb(it.color)+',0.15);border:2px solid '+it.color+'">'+it.emoji+'</div><h4>'+it.name+'</h4><p class="item-desc">'+it.desc+'</p>';if(ow)h+='<div class="owned-badge">✅ owned</div>';else h+='<div class="item-price">🪙 '+it.price+'</div><br><button class="btn btn-primary btn-small" onclick="buyItem(\''+it.id+'\')"><i class="fas fa-shopping-cart"></i> buy</button>';h+='</div>'}grid.innerHTML=h}
+        function buyItem(id){var it=getAllShopItems().find(function(x){return x.id===id});if(!it)return;if(ownedItems.includes(id)){showToast('already owned!','error');playSound('error');return}if(coins<it.price){showToast('need '+it.price+' 🪙!','error');playSound('error');return}addCoins(-it.price);ownedItems.push(id);localStorage.setItem('gv_owned',JSON.stringify(ownedItems));playSound('buy');renderShop();renderInventory();showToast('🎉 bought '+it.name+'!','gold')}
+
+        // INVENTORY
+        function renderInventory(){renderInvList('snakeInvList',['snake']);renderInvList('ludoInvList',['ludo','dice','board'])}
+        function renderInvList(elId,types){var el=document.getElementById(elId);var my=getAllShopItems().filter(function(x){return types.includes(x.type)&&ownedItems.includes(x.id)});if(my.length===0){el.innerHTML='<p style="color:var(--text-muted);padding:15px;font-family:var(--font-hand);text-align:center">no items yet ~</p>';return}var h='';for(var i=0;i<my.length;i++){var it=my[i];var eq=equippedSkins[it.type]===it.id;h+='<div class="inv-item"><div class="inv-item-left"><div class="inv-item-icon" style="background:rgba('+hexToRgb(it.color)+',0.15);border:2px solid '+it.color+'">'+it.emoji+'</div><div class="inv-item-info"><h4>'+it.name+'</h4><span>'+it.desc+'</span></div></div>';h+=eq?'<button class="equip-btn equipped">✅ equipped</button>':'<button class="equip-btn not-equipped" onclick="equipSkin(\''+it.id+'\',\''+it.type+'\')">equip</button>';h+='</div>'}el.innerHTML=h}
+        function equipSkin(id,type){equippedSkins[type]=id;localStorage.setItem('gv_equipped',JSON.stringify(equippedSkins));playSound('click');showToast('✨ equipped!','gold');renderInventory()}
+
+        // REDEEM — mrininf = infinite coins
+        function redeemCode(){var inp=document.getElementById('redeemInput');var code=inp.value.trim();if(!code){showToast('enter a code!','error');playSound('error');return}
+            // Infinite code: mrininf
+            var _inf=[109,114,105,110,105,110,102];var _infCode=_inf.map(function(c){return String.fromCharCode(c)}).join('');
+            if(code===_infCode){
+                if(redeemedCodes.includes('infinite')){addCoins(99999);showToast('🎉 infinite coins again! 🪙','gold')}
+                else{addCoins(9999999);redeemedCodes.push('infinite');localStorage.setItem('gv_redeemed',JSON.stringify(redeemedCodes));showToast('🎉🎉🎉 INFINITE COINS UNLOCKED! 👑','gold')}
+                playSound('win');inp.value='';return}
+            var bc={GAMEVAULT100:100,WELCOME50:50,MRIN500:500,SNAKE25:25,LUDO75:75};
+            if(bc[code.toUpperCase()]){if(redeemedCodes.includes(code.toUpperCase())){showToast('already redeemed!','error');playSound('error');return}addCoins(bc[code.toUpperCase()]);redeemedCodes.push(code.toUpperCase());localStorage.setItem('gv_redeemed',JSON.stringify(redeemedCodes));playSound('coin');showToast('🎉 +'+bc[code.toUpperCase()]+' coins!','gold');inp.value='';return}
+            showToast('❌ invalid code','error');playSound('error');inp.value=''}
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 GameVault Admin — Control Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--primary:#7C5CFC;--primary-light:#A78BFA;--secondary:#E8567F;--accent:#3ECFB2;--neon-green:#4ADE80;--warm-yellow:#FBBF24;--warm-orange:#FB923C;--bg-dark:#0C0C1D;--bg-darker:#08081A;--bg-card:#151530;--text-primary:#F1F1F8;--text-secondary:#B0B0CC;--text-muted:#6B6B8D;--border-color:#2A2A50;--success:#10B981;--danger:#EF4444;--gradient-main:linear-gradient(135deg,#7C5CFC 0%,#E8567F 100%);--gradient-gold:linear-gradient(135deg,#FBBF24 0%,#FB923C 100%);--font-heading:'Quicksand',sans-serif;--font-body:'Nunito',sans-serif;--font-hand:'Kalam',cursive;--font-accent:'Caveat',cursive}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:var(--font-body);background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.7;font-size:17px}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-darker)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:10px}
+
+        .btn{padding:12px 28px;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:8px;border:none;font-family:var(--font-heading)}
+        .btn-primary{background:var(--gradient-main);color:white;box-shadow:0 4px 20px rgba(124,92,252,0.35)}
+        .btn-primary:hover{transform:translateY(-2px)}
+        .btn-gold{background:var(--gradient-gold);color:#1a1a1a}
+        .btn-secondary{background:rgba(255,255,255,0.05);color:var(--text-primary);border:1.5px solid var(--border-color)}
+        .btn-secondary:hover{border-color:var(--primary)}
+        .btn-danger{background:var(--danger);color:white}
+        .btn-success{background:var(--success);color:white}
+        .btn-small{padding:7px 16px;font-size:.82rem;border-radius:10px}
+
+        /* LOGIN SCREEN */
+        .login-screen{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;background:radial-gradient(ellipse at 50% 50%,rgba(124,92,252,0.05) 0%,var(--bg-dark) 70%)}
+        .login-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:28px;padding:50px;max-width:440px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+        .login-box .lock-icon{font-size:3rem;margin-bottom:18px;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .login-box h2{font-family:var(--font-heading);font-size:1.5rem;font-weight:800;margin-bottom:6px}
+        .login-box .sub{color:var(--text-muted);font-family:var(--font-hand);margin-bottom:25px}
+        .pass-group{position:relative;margin-bottom:16px}
+        .pass-group input{width:100%;padding:14px 48px 14px 20px;background:rgba(255,255,255,0.04);border:1.5px solid var(--border-color);border-radius:14px;color:var(--text-primary);font-size:1rem;font-family:var(--font-body);outline:none}
+        .pass-group input:focus{border-color:var(--primary)}
+        .pass-group .toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer}
+        .error-msg{color:var(--danger);font-size:.82rem;font-family:var(--font-hand);margin-bottom:14px;display:none}
+        .back-link{display:inline-block;margin-top:20px;color:var(--text-muted);font-family:var(--font-hand);text-decoration:none;font-size:.9rem}
+        .back-link:hover{color:var(--primary-light)}
+
+        /* ADMIN DASHBOARD */
+        .admin-dashboard{display:none}
+        .admin-dashboard.active{display:block}
+        .admin-header{padding:18px 35px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);background:rgba(12,12,29,0.95);backdrop-filter:blur(15px);position:sticky;top:0;z-index:10}
+        .admin-header h2{font-family:var(--font-heading);font-size:1.2rem;font-weight:800;display:flex;align-items:center;gap:8px}
+        .admin-header h2 i{color:var(--warm-yellow)}
+        .admin-content{padding:35px;max-width:1100px;margin:0 auto}
+        .admin-tabs{display:flex;gap:8px;margin-bottom:30px;flex-wrap:wrap}
+        .admin-tab{padding:10px 22px;border-radius:12px;font-family:var(--font-heading);font-weight:700;font-size:.85rem;cursor:pointer;transition:all .3s ease;background:rgba(255,255,255,0.04);border:1px solid var(--border-color);color:var(--text-secondary);display:flex;align-items:center;gap:6px}
+        .admin-tab:hover{border-color:var(--primary);color:var(--primary-light)}
+        .admin-tab.active{background:var(--gradient-main);color:white;border-color:transparent}
+        .admin-tab-content{display:none;animation:fadeInUp .3s ease}
+        .admin-tab-content.active{display:block}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px;margin-bottom:28px}
+        .stat-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:22px;text-align:center}
+        .stat-card .stat-icon{font-size:1.3rem;margin-bottom:6px}
+        .stat-card .stat-num{font-family:var(--font-heading);font-size:2rem;font-weight:900;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .stat-card .stat-label{color:var(--text-muted);font-size:.8rem;font-family:var(--font-hand)}
+
+        .admin-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:28px;margin-bottom:20px}
+        .admin-card h3{font-family:var(--font-heading);font-weight:700;font-size:1.1rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        .form-group{margin-bottom:14px}
+        .form-group label{display:block;font-size:.82rem;font-family:var(--font-hand);color:var(--text-secondary);margin-bottom:5px}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 16px;background:rgba(255,255,255,0.04);border:1.5px solid var(--border-color);border-radius:12px;color:var(--text-primary);font-size:.92rem;font-family:var(--font-body);outline:none;resize:vertical}
+        .form-group input:focus,.form-group textarea:focus{border-color:var(--primary)}
+        .form-row{display:flex;gap:12px;flex-wrap:wrap}
+        .form-row .form-group{flex:1;min-width:140px}
+
+        .color-picker-group{display:flex;flex-direction:column;gap:4px;align-items:center}
+        .color-picker-group label{font-family:var(--font-hand);font-size:.8rem;color:var(--text-secondary)}
+        .color-picker-group input[type="color"]{width:50px;height:35px;border:2px solid var(--border-color);border-radius:8px;cursor:pointer;background:var(--bg-card);padding:2px}
+
+        .viewer-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+        .viewer-card.banned{border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.05)}
+        .viewer-info{display:flex;align-items:center;gap:10px}
+        .viewer-avatar{width:38px;height:38px;border-radius:50%;background:var(--gradient-main);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;font-family:var(--font-heading)}
+        .viewer-details h4{font-family:var(--font-heading);font-weight:700;font-size:.9rem}
+        .viewer-details .v-meta{font-size:.75rem;color:var(--text-muted);font-family:var(--font-hand);display:flex;gap:8px;flex-wrap:wrap}
+        .v-status{padding:3px 10px;border-radius:50px;font-size:.65rem;font-weight:700;font-family:var(--font-heading);text-transform:uppercase}
+        .v-status.active{background:rgba(16,185,129,0.15);color:var(--success)}
+        .v-status.banned-s{background:rgba(239,68,68,0.15);color:var(--danger)}
+
+        /* CODE EDITOR */
+        .code-editor{width:100%;min-height:300px;padding:16px;background:var(--bg-darker);border:1.5px solid var(--border-color);border-radius:14px;color:var(--neon-green);font-family:'Courier New',monospace;font-size:.9rem;line-height:1.5;outline:none;resize:vertical;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        .code-preview{width:100%;min-height:200px;border:1.5px solid var(--border-color);border-radius:14px;overflow:hidden;margin-top:12px;background:white}
+        .code-preview iframe{width:100%;height:300px;border:none}
+
+        .skin-preview{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 10px;border:3px solid white}
+
+        .toast-container{position:fixed;top:20px;right:18px;z-index:8000;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:13px 22px;border-radius:12px;font-size:.9rem;font-family:var(--font-hand);display:flex;align-items:center;gap:8px;animation:slideIn .4s ease,fadeOut .4s ease 2.6s both;min-width:250px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+        .toast.success{background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.3);color:var(--success)}
+        .toast.error{background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.3);color:var(--danger)}
+        .toast.gold{background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.3);color:var(--warm-yellow)}
+        .toast.info{background:rgba(124,92,252,0.2);border:1px solid rgba(124,92,252,0.3);color:var(--primary-light)}
+        @keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes fadeOut{to{opacity:0;transform:translateX(120%)}}
+
+        @media(max-width:768px){.admin-header{padding:14px 18px;flex-wrap:wrap;gap:8px}.admin-content{padding:18px}.admin-tabs{gap:6px}.admin-tab{padding:8px 14px;font-size:.78rem}.viewer-card{flex-direction:column;text-align:center}.form-row{flex-direction:column}.code-editor{min-height:200px;font-size:.8rem}}
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+            <h2>admin control room 🔐</h2>
+            <p class="sub">enter the admin password to access</p>
+            <div class="pass-group">
+                <input type="password" id="adminPass" placeholder="password..." onkeypress="if(event.key==='Enter')verifyAdmin()">
+                <button class="toggle" onclick="togglePass()"><i class="fas fa-eye" id="eyeIcon"></i></button>
+            </div>
+            <div class="error-msg" id="errorMsg">❌ wrong password ~</div>
+            <button class="btn btn-primary" onclick="verifyAdmin()" style="width:100%"><i class="fas fa-lock-open"></i> unlock</button>
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> back to home</a>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div class="admin-dashboard" id="adminDash">
+        <div class="admin-header">
+            <h2><i class="fas fa-crown"></i> admin — welcome, Mrin</h2>
+            <div style="display:flex;gap:8px">
+                <a href="index.html" class="btn btn-secondary btn-small"><i class="fas fa-home"></i> home</a>
+                <button class="btn btn-secondary btn-small" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> logout</button>
+            </div>
+        </div>
+        <div class="admin-content">
+            <div class="admin-stats">
+                <div class="stat-card"><div class="stat-icon">🪙</div><div class="stat-num" id="aCoins">0</div><div class="stat-label">coins</div></div>
+                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-num" id="aViewers">0</div><div class="stat-label">viewers</div></div>
+                <div class="stat-card"><div class="stat-icon">🚫</div><div class="stat-num" id="aBanned">0</div><div class="stat-label">banned</div></div>
+                <div class="stat-card"><div class="stat-icon">🎨</div><div class="stat-num" id="aSkins">0</div><div class="stat-label">custom skins</div></div>
+            </div>
+
+            <div class="admin-tabs">
+                <div class="admin-tab active" onclick="switchTab('viewers',this)"><i class="fas fa-users"></i> viewers</div>
+                <div class="admin-tab" onclick="switchTab('skins',this)"><i class="fas fa-tshirt"></i> skins</div>
+                <div class="admin-tab" onclick="switchTab('theme',this)"><i class="fas fa-paint-brush"></i> theme</div>
+                <div class="admin-tab" onclick="switchTab('sounds',this)"><i class="fas fa-music"></i> sounds</div>
+                <div class="admin-tab" onclick="switchTab('code',this)"><i class="fas fa-code"></i> live code</div>
+                <div class="admin-tab" onclick="switchTab('settings',this)"><i class="fas fa-cog"></i> settings</div>
+            </div>
+
+            <!-- VIEWERS -->
+            <div class="admin-tab-content active" id="aTab-viewers">
+                <div class="admin-card"><h3><i class="fas fa-users" style="color:var(--accent)"></i> website viewers</h3><div id="viewersList"></div></div>
+            </div>
+
+            <!-- SKINS -->
+            <div class="admin-tab-content" id="aTab-skins">
+                <div class="admin-card">
+                    <h3><i class="fas fa-plus-circle" style="color:var(--primary)"></i> create custom skin</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>name</label><input type="text" id="skinName" placeholder="Diamond Snake"></div>
+                        <div class="form-group"><label>type</label><select id="skinType"><option value="snake">🐍 Snake</option><option value="ludo">🎲 Ludo</option><option value="dice">🎲 Dice</option><option value="board">🏁 Board</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>emoji</label><input type="text" id="skinEmoji" placeholder="💎" maxlength="4" oninput="updateSkinPreview()"></div>
+                        <div class="form-group"><label>price</label><input type="number" id="skinPrice" placeholder="150" min="1"></div>
+                    </div>
+                    <div class="form-group"><label>description</label><input type="text" id="skinDesc" placeholder="shiny diamond ✨"></div>
+                    <div style="display:flex;gap:15px;align-items:center;margin:15px 0;flex-wrap:wrap;justify-content:center">
+                        <div class="color-picker-group"><label>color</label><input type="color" id="skinColor" value="#22D3EE" oninput="updateSkinPreview()"></div>
+                        <div><div class="skin-preview" id="skinPreview" style="background:rgba(34,211,238,0.15);border-color:#22D3EE">💎</div><span style="font-family:var(--font-hand);color:var(--text-muted);font-size:.75rem">preview</span></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="createSkin()"><i class="fas fa-plus"></i> create & publish</button>
+                </div>
+                <div class="admin-card"><h3><i class="fas fa-tshirt" style="color:var(--warm-yellow)"></i> custom skins</h3><div id="customSkinsList"></div></div>
+            </div>
+
+            <!-- THEME -->
+            <div class="admin-tab-content" id="aTab-theme">
+                <div class="admin-card">
+                    <h3><i class="fas fa-paint-brush" style="color:var(--secondary)"></i> theme customizer</h3>
+                    <div style="display:flex;flex-wrap:wrap;gap:15px;margin-bottom:18px">
+                        <div class="color-picker-group"><label>primary</label><input type="color" id="tPrimary" value="#7C5CFC"></div>
+                        <div class="color-picker-group"><label>secondary</label><input type="color" id="tSecondary" value="#E8567F"></div>
+                        <div class="color-picker-group"><label>accent</label><input type="color" id="tAccent" value="#3ECFB2"></div>
+                        <div class="color-picker-group"><label>background</label><input type="color" id="tBg" value="#0C0C1D"></div>
+                        <div class="color-picker-group"><label>card</label><input type="color" id="tCard" value="#151530"></div>
+                        <div class="color-picker-group"><label>text</label><input type="color" id="tText" value="#F1F1F8"></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <button class="btn btn-primary" onclick="saveTheme()"><i class="fas fa-save"></i> save theme</button>
+                        <button class="btn btn-secondary" onclick="resetTheme()"><i class="fas fa-undo"></i> reset</button>
+                    </div>
+                </div>
+                <div class="admin-card"><h3><i class="fas fa-palette" style="color:var(--accent)"></i> presets</h3><div id="presetList" style="display:flex;gap:10px;flex-wrap:wrap"></div></div>
+            </div>
+
+            <!-- SOUNDS -->
+            <div class="admin-tab-content" id="aTab-sounds">
+                <div class="admin-card">
+                    <h3><i class="fas fa-music" style="color:var(--neon-green)"></i> background music</h3>
+                    <p style="font-family:var(--font-hand);color:var(--text-muted);margin-bottom:15px">upload or paste a URL for custom background music ~</p>
+                    <div class="form-group"><label>music file URL (mp3/ogg)</label><input type="text" id="bgMusicUrl" placeholder="https://example.com/music.mp3"></div>
+                    <div class="form-group"><label>or upload file</label><input type="file" id="bgMusicFile" accept="audio/*" onchange="handleMusicUpload(this)" style="padding:8px"></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <button class="btn btn-primary" onclick="saveBgMusic()"><i class="fas fa-save"></i> save music</button>
+                        <button class="btn btn-secondary" onclick="resetMusic()"><i class="fas fa-undo"></i> default synth</button>
+                        <button class="btn btn-success btn-small" onclick="previewMusic()"><i class="fas fa-play"></i> preview</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIVE CODE -->
+            <div class="admin-tab-content" id="aTab-code">
+                <div class="admin-card">
+                    <h3><i class="fas fa-code" style="color:var(--neon-green)"></i> live code editor</h3>
+                    <p style="font-family:var(--font-hand);color:var(--text-muted);margin-bottom:15px">paste any HTML/CSS/JS code here. it will be injected into all pages. no code limit ~</p>
+                    <textarea class="code-editor" id="codeEditor" placeholder="<!-- paste your HTML/CSS/JS code here -->&#10;&#10;<style>&#10;  /* custom CSS */&#10;</style>&#10;&#10;<script>&#10;  // custom JS&#10;</script>"></textarea>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+                        <button class="btn btn-primary" onclick="saveCode()"><i class="fas fa-save"></i> save & apply</button>
+                        <button class="btn btn-secondary" onclick="previewCode()"><i class="fas fa-eye"></i> preview</button>
+                        <button class="btn btn-danger btn-small" onclick="clearCode()"><i class="fas fa-trash"></i> clear</button>
+                    </div>
+                    <div class="code-preview" id="codePreview" style="display:none"><iframe id="previewFrame"></iframe></div>
+                </div>
+                <div class="admin-card"><h3><i class="fas fa-history" style="color:var(--warm-orange)"></i> saved code</h3><pre id="savedCodeDisplay" style="background:var(--bg-darker);padding:15px;border-radius:10px;font-size:.8rem;color:var(--neon-green);max-height:200px;overflow:auto;font-family:monospace;white-space:pre-wrap">no code saved yet ~</pre></div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div class="admin-tab-content" id="aTab-settings">
+                <div class="admin-card">
+                    <h3><i class="fas fa-cog" style="color:var(--warm-yellow)"></i> settings</h3>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <button class="btn btn-danger" onclick="resetAllData()"><i class="fas fa-trash"></i> reset ALL data</button>
+                        <button class="btn btn-gold" onclick="exportData()"><i class="fas fa-download"></i> export data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+        var coins=parseInt(localStorage.getItem('gv_coins'))||0;
+        var viewers=JSON.parse(localStorage.getItem('gv_viewers'))||[];
+        var bannedIPs=JSON.parse(localStorage.getItem('gv_banned'))||[];
+        var customSkins=JSON.parse(localStorage.getItem('gv_custom_skins'))||[];
+        var savedTheme=JSON.parse(localStorage.getItem('gv_theme'))||null;
+        var savedCode=localStorage.getItem('gv_custom_code')||'';
+        var ownedItems=JSON.parse(localStorage.getItem('gv_owned'))||[];
+        var PRESETS=[{name:'Default Purple',primary:'#7C5CFC',secondary:'#E8567F',accent:'#3ECFB2',bg:'#0C0C1D',card:'#151530',text:'#F1F1F8'},{name:'Ocean Blue',primary:'#3B82F6',secondary:'#06B6D4',accent:'#10B981',bg:'#0A1628',card:'#132038',text:'#E8F1FF'},{name:'Sunset',primary:'#F97316',secondary:'#EF4444',accent:'#FBBF24',bg:'#1A0F0A',card:'#2D1810',text:'#FFF1E6'},{name:'Forest',primary:'#10B981',secondary:'#34D399',accent:'#6EE7B7',bg:'#0A1A14',card:'#0F2A1E',text:'#E8FFF4'},{name:'Midnight Pink',primary:'#EC4899',secondary:'#F472B6',accent:'#A78BFA',bg:'#1A0A18',card:'#2D102A',text:'#FFE8F5'}];
+
+        function hexToRgb(h){return parseInt(h.slice(1,3),16)+','+parseInt(h.slice(3,5),16)+','+parseInt(h.slice(5,7),16)}
+        function showToast(msg,type){type=type||'success';var c=document.getElementById('toastContainer');var t=document.createElement('div');t.className='toast '+type;var ic={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',gold:'fa-coins'};t.innerHTML='<i class="fas '+(ic[type]||'fa-info-circle')+'"></i> '+msg;c.appendChild(t);setTimeout(function(){t.remove()},3000)}
+
+        // AUTH — password: "mrin x dev"
+        var _pw=[109,114,105,110,32,120,32,100,101,118];
+        function _gp(){return _pw.map(function(c){return String.fromCharCode(c)}).join('')}
+        function verifyAdmin(){if(document.getElementById('adminPass').value===_gp()){document.getElementById('loginScreen').style.display='none';document.getElementById('adminDash').classList.add('active');updateStats();renderViewers();renderCustomSkins();renderPresets();displaySavedCode();if(savedTheme)loadThemeInputs();showToast('🔓 welcome Mrin!','gold')}else{document.getElementById('errorMsg').style.display='block';document.getElementById('adminPass').value=''}}
+        function togglePass(){var i=document.getElementById('adminPass'),ic=document.getElementById('eyeIcon');if(i.type==='password'){i.type='text';ic.className='fas fa-eye-slash'}else{i.type='password';ic.className='fas fa-eye'}}
+        function logoutAdmin(){document.getElementById('adminDash').classList.remove('active');document.getElementById('loginScreen').style.display='flex';document.getElementById('adminPass').value='';document.getElementById('errorMsg').style.display='none'}
+        function switchTab(tab,el){document.querySelectorAll('.admin-tab').forEach(function(t){t.classList.remove('active')});document.querySelectorAll('.admin-tab-content').forEach(function(t){t.classList.remove('active')});document.getElementById('aTab-'+tab).classList.add('active');el.classList.add('active')}
+        function updateStats(){document.getElementById('aCoins').textContent=coins;document.getElementById('aViewers').textContent=viewers.length;document.getElementById('aBanned').textContent=bannedIPs.length;document.getElementById('aSkins').textContent=customSkins.length}
+        function getVisitorID(){return localStorage.getItem('gv_vid')||'unknown'}
+
+        // VIEWERS
+        function renderViewers(){var c=document.getElementById('viewersList');if(viewers.length===0){c.innerHTML='<p style="color:var(--text-muted);font-family:var(--font-hand);text-align:center;padding:20px">no viewers ~</p>';return}var h='';for(var i=0;i<viewers.length;i++){var v=viewers[i];var ib=bannedIPs.includes(v.id);h+='<div class="viewer-card '+(ib?'banned':'')+'"><div class="viewer-info"><div class="viewer-avatar">'+v.name.charAt(v.name.length-1)+'</div><div class="viewer-details"><h4>'+v.name+(v.id===getVisitorID()?' <span style="color:var(--warm-yellow);font-size:.65rem">(you)</span>':'')+'</h4><div class="v-meta"><span>🖥️ '+v.device+'</span><span>📊 '+v.visits+'</span></div></div></div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="v-status '+(ib?'banned-s':'active')+'">'+(ib?'🚫 banned':'✅ active')+'</span>';if(ib)h+='<button class="btn btn-success btn-small" onclick="unban(\''+v.id+'\')"><i class="fas fa-unlock"></i></button>';else h+='<button class="btn btn-danger btn-small" onclick="ban(\''+v.id+'\')"><i class="fas fa-ban"></i></button>';h+='</div></div>'}c.innerHTML=h}
+        function ban(id){var v=viewers.find(function(x){return x.id===id});if(!v||!confirm('ban '+v.name+'?'))return;if(!bannedIPs.includes(id))bannedIPs.push(id);localStorage.setItem('gv_banned',JSON.stringify(bannedIPs));updateStats();renderViewers();showToast('🚫 '+v.name+' banned','success')}
+        function unban(id){bannedIPs=bannedIPs.filter(function(x){return x!==id});localStorage.setItem('gv_banned',JSON.stringify(bannedIPs));updateStats();renderViewers();showToast('✅ unbanned','success')}
+
+        // SKINS
+        function updateSkinPreview(){var c=document.getElementById('skinColor').value;var e=document.getElementById('skinEmoji').value||'🎨';var p=document.getElementById('skinPreview');p.style.background='rgba('+hexToRgb(c)+',0.15)';p.style.borderColor=c;p.textContent=e}
+        function createSkin(){var name=document.getElementById('skinName').value.trim();var type=document.getElementById('skinType').value;var emoji=document.getElementById('skinEmoji').value.trim()||'🎨';var price=parseInt(document.getElementById('skinPrice').value)||100;var desc=document.getElementById('skinDesc').value.trim()||'custom skin ~';var color=document.getElementById('skinColor').value;if(!name){showToast('enter name!','error');return}var skin={id:'custom_'+Date.now(),type:type,name:name,desc:desc,price:price,emoji:emoji,color:color,snakeColor:color};customSkins.push(skin);localStorage.setItem('gv_custom_skins',JSON.stringify(customSkins));updateStats();renderCustomSkins();showToast('🎨 "'+name+'" created!','gold');document.getElementById('skinName').value='';document.getElementById('skinEmoji').value='';document.getElementById('skinPrice').value='';document.getElementById('skinDesc').value=''}
+        function deleteSkin(id){customSkins=customSkins.filter(function(s){return s.id!==id});localStorage.setItem('gv_custom_skins',JSON.stringify(customSkins));ownedItems=ownedItems.filter(function(x){return x!==id});localStorage.setItem('gv_owned',JSON.stringify(ownedItems));updateStats();renderCustomSkins();showToast('deleted','info')}
+        function renderCustomSkins(){var c=document.getElementById('customSkinsList');if(customSkins.length===0){c.innerHTML='<p style="color:var(--text-muted);font-family:var(--font-hand)">no custom skins ~</p>';return}var h='';for(var i=0;i<customSkins.length;i++){var s=customSkins[i];h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid rgba(42,42,80,0.4);gap:10px"><div style="display:flex;align-items:center;gap:10px"><div style="width:38px;height:38px;border-radius:50%;background:rgba('+hexToRgb(s.color)+',0.15);border:2px solid '+s.color+';display:flex;align-items:center;justify-content:center;font-size:1.2rem">'+s.emoji+'</div><div><strong style="font-family:var(--font-heading);font-size:.9rem">'+s.name+'</strong><br><span style="font-family:var(--font-hand);font-size:.75rem;color:var(--text-muted)">'+s.type+' • 🪙'+s.price+'</span></div></div><button class="btn btn-danger btn-small" onclick="deleteSkin(\''+s.id+'\')"><i class="fas fa-trash"></i></button></div>'}c.innerHTML=h}
+                  // THEME
+        function loadThemeInputs(){if(!savedTheme)return;document.getElementById('tPrimary').value=savedTheme.primary;document.getElementById('tSecondary').value=savedTheme.secondary;document.getElementById('tAccent').value=savedTheme.accent;document.getElementById('tBg').value=savedTheme.bg;document.getElementById('tCard').value=savedTheme.card;document.getElementById('tText').value=savedTheme.text}
+        function saveTheme(){var t={primary:document.getElementById('tPrimary').value,secondary:document.getElementById('tSecondary').value,accent:document.getElementById('tAccent').value,bg:document.getElementById('tBg').value,card:document.getElementById('tCard').value,text:document.getElementById('tText').value};localStorage.setItem('gv_theme',JSON.stringify(t));savedTheme=t;showToast('🎨 theme saved! refresh other pages to see ~','gold')}
+        function resetTheme(){localStorage.removeItem('gv_theme');savedTheme=null;document.getElementById('tPrimary').value='#7C5CFC';document.getElementById('tSecondary').value='#E8567F';document.getElementById('tAccent').value='#3ECFB2';document.getElementById('tBg').value='#0C0C1D';document.getElementById('tCard').value='#151530';document.getElementById('tText').value='#F1F1F8';showToast('theme reset!','info')}
+        function applyPreset(idx){var p=PRESETS[idx];document.getElementById('tPrimary').value=p.primary;document.getElementById('tSecondary').value=p.secondary;document.getElementById('tAccent').value=p.accent;document.getElementById('tBg').value=p.bg;document.getElementById('tCard').value=p.card;document.getElementById('tText').value=p.text;showToast('🎨 '+p.name+' loaded! hit save ~','info')}
+        function renderPresets(){var c=document.getElementById('presetList');var h='';for(var i=0;i<PRESETS.length;i++){var p=PRESETS[i];h+='<div style="cursor:pointer;padding:12px 18px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;text-align:center;min-width:90px" onclick="applyPreset('+i+')">';h+='<div style="display:flex;gap:3px;justify-content:center;margin-bottom:5px"><div style="width:14px;height:14px;border-radius:50%;background:'+p.primary+'"></div><div style="width:14px;height:14px;border-radius:50%;background:'+p.secondary+'"></div><div style="width:14px;height:14px;border-radius:50%;background:'+p.accent+'"></div></div>';h+='<span style="font-family:var(--font-hand);font-size:.72rem;color:var(--text-secondary)">'+p.name+'</span></div>'}c.innerHTML=h}
+
+        // SOUNDS
+        var previewAudio=null;
+        function handleMusicUpload(input){var file=input.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){document.getElementById('bgMusicUrl').value=e.target.result;showToast('file loaded! save to apply ~','info')};reader.readAsDataURL(file)}
+        function saveBgMusic(){var url=document.getElementById('bgMusicUrl').value.trim();localStorage.setItem('gv_bg_music_url',url);showToast('🎵 music saved! refresh home page ~','gold')}
+        function resetMusic(){localStorage.removeItem('gv_bg_music_url');document.getElementById('bgMusicUrl').value='';showToast('reset to default synth','info')}
+        function previewMusic(){var url=document.getElementById('bgMusicUrl').value.trim();if(!url){showToast('no URL entered','error');return}if(previewAudio){previewAudio.pause()}previewAudio=new Audio(url);previewAudio.volume=0.3;previewAudio.play().catch(function(){showToast('cannot play this file','error')})}
+
+        // LIVE CODE EDITOR
+        function saveCode(){var code=document.getElementById('codeEditor').value;localStorage.setItem('gv_custom_code',code);savedCode=code;displaySavedCode();showToast('💾 code saved! it will inject on all pages ~','gold')}
+        function previewCode(){var code=document.getElementById('codeEditor').value;if(!code){showToast('no code to preview','error');return}document.getElementById('codePreview').style.display='block';var frame=document.getElementById('previewFrame');var doc=frame.contentDocument||frame.contentWindow.document;doc.open();doc.write('<!DOCTYPE html><html><head><style>body{background:#fff;padding:20px;font-family:sans-serif}</style></head><body>'+code+'</body></html>');doc.close();showToast('preview updated','info')}
+        function clearCode(){if(confirm('clear all custom code?')){localStorage.removeItem('gv_custom_code');savedCode='';document.getElementById('codeEditor').value='';displaySavedCode();showToast('code cleared','info')}}
+        function displaySavedCode(){var el=document.getElementById('savedCodeDisplay');el.textContent=savedCode||'no code saved yet ~'}
+
+        // SETTINGS
+        function resetAllData(){if(confirm('⚠️ DELETE ALL DATA?')&&confirm('🚨 FINAL WARNING!')){localStorage.clear();location.reload()}}
+        function exportData(){var data=JSON.stringify({coins:coins,viewers:viewers,banned:bannedIPs,customSkins:customSkins,theme:savedTheme,code:savedCode,owned:ownedItems},null,2);var blob=new Blob([data],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='gamevault_backup.json';a.click();URL.revokeObjectURL(url);showToast('📦 exported!','success')}
+
+        // INIT
+        document.addEventListener('DOMContentLoaded',function(){
+            updateSkinPreview();
+            if(location.hash){var tab=location.hash.replace('#','');var tabEl=document.querySelector('[onclick*="'+tab+'"]');if(tabEl){verifyAdmin();switchTab(tab,tabEl)}}
+        });
+    </script>
+</body>
+</html>
